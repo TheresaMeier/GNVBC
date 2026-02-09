@@ -13,9 +13,15 @@ Suggests:
 Config/testthat/edition: 3
 Imports: 
     dplyr,
+    furrr,
+    future,
     igraph,
     lubridate,
+    magrittr,
     Matrix,
+    mgcv,
+    purrr,
     rvinecopulib,
+    stats,
     tidyr,
     wdm
