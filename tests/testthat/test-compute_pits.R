@@ -86,3 +86,131 @@ test_that("compute_pit returns valid PIT values for all supported families", {
   expect_error(compute_pit(dat_g$y, fit_dummy))
 })
 
+make_test_data <- function(n_locs = 10, n_time = 50) {
+
+  set.seed(42)
+
+  data = data.frame(cbind(matrix(rnorm(n_locs * n_time), ncol=n_locs)), matrix(rgamma(500, shape = 2), ncol=n_locs))
+  colnames(data) = paste0(rep(c("tas.", "pr."), each = n_locs), c(1:n_locs))
+
+  time <- as.Date("2000-01-01") + seq_len(n_time) - 1
+
+  locs <- data.frame(
+    Id = 1:n_locs,
+    Lon = runif(n_locs, -10, 10),
+    Lat = runif(n_locs, 40, 50)
+  )
+
+  families <- list(
+    tas = gaussian(),
+    pr  = Gamma(link = "log")
+  )
+
+  gam_list <- get_GAMs(
+    mp = data,
+    mc = data,
+    rc = data,
+    time_p = time,
+    time_c = time,
+    locs = locs,
+    var_names = c("tas", "pr"),
+    families = families,
+    cores = 1
+  )$mc
+
+  list(
+    data = data,
+    time = time,
+    locs = locs,
+    gam_list = gam_list
+  )
+}
+
+test_that("extract_components returns expected structure", {
+
+  x <- make_test_data()
+
+  res <- extract_components(
+    gam_list = x$gam_list,
+    data     = x$data,
+    locs     = x$locs,
+    time     = x$time
+  )
+
+  expect_type(res, "list")
+  expect_named(res, c("seasonality", "remainder", "remainder_orig"))
+})
+
+test_that("extract_components returns consistent dimensions", {
+
+  x <- make_test_data()
+
+  res <- extract_components(
+    x$gam_list, x$data, x$locs, x$time
+  )
+
+  expect_equal(
+    dim(res$seasonality),
+    dim(res$remainder_orig)
+  )
+
+  expect_equal(
+    dim(res$remainder),
+    dim(res$remainder_orig)
+  )
+})
+
+test_that("output columns follow var.Id naming convention", {
+
+  x <- make_test_data()
+
+  res <- extract_components(
+    x$gam_list, x$data, x$locs, x$time
+  )
+
+  expect_true(all(grepl("^(tas|pr)\\.\\d+$", colnames(res$seasonality))))
+})
+
+test_that("PIT values are in valid ranges", {
+
+  x <- make_test_data()
+
+  res <- extract_components(
+    x$gam_list, x$data, x$locs, x$time
+  )
+
+  expect_true(all(res$remainder_orig >= 0))
+  expect_true(all(res$remainder_orig <= 1))
+
+  expect_true(all(res$remainder > 0))
+  expect_true(all(res$remainder < 1))
+})
+
+test_that("extract_components is deterministic for fixed seed", {
+
+  x <- make_test_data()
+
+  res1 <- extract_components(
+    x$gam_list, x$data, x$locs, x$time
+  )
+
+  res2 <- extract_components(
+    x$gam_list, x$data, x$locs, x$time
+  )
+
+  expect_equal(res1$seasonality,    res2$seasonality)
+  expect_equal(res1$remainder_orig, res2$remainder_orig)
+})
+
+test_that("wrong time length triggers error", {
+
+  x <- make_test_data()
+
+  bad_time <- x$time[-1]
+
+  expect_error(
+    extract_components(x$gam_list, x$data, x$locs, bad_time)
+  )
+})
+
+

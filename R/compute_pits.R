@@ -147,3 +147,135 @@ compute_pit <- function(y, fit) {
 
   return(u)
 }
+
+
+
+#' @title Extract seasonality and remainder components from fitted GAMs
+#' @description Decomposes multivariate time series data into:
+#' - Seasonality component: the fitted mean from the GAMs, capturing temporal and spatial patterns (GAM predictions)
+#' - Remainder component: the Probability Integral Transform (PIT) values of the original data relative to the fitted GAMs, representing residuals on the copula scale.
+#'
+#' This function transforms the input data into a long format, applies the fitted GAMs to extract the mean and compute PIT values for each variable, and then reshapes the results back into a wide format suitable for dependence modeling.
+#' @param gam_list Named list of fitted GAM objects (one per variable); obtained from `get_GAMs()`.
+#' @param data Original data frame containing the multivariate time series, with columns corresponding to variables and spatial locations.
+#' @param locs Data frame of spatial locations with columns: Id, Lat, Lon
+#' @param time Date vector corresponding to rows of the input data frame, used to align with GAM predictions.
+#'
+#' @returns A list containing:
+#' - `seasonality`: Wide-format data frame of fitted mean values from the GAMs
+#' - `remainder`: Wide-format data frame of pseudo-observations of PIT values for dependence modeling
+#' - `remainder_orig`: Wide-format data frame of original PIT values before transformation to pseudo-observations
+#' @export
+#'
+#' @examples
+#' set.seed(1)
+#' n_locs = 10
+#' # Simulate some data for demonstration
+#' mp = data.frame(cbind(matrix(rnorm(500), ncol=n_locs)),
+#'                       matrix(rgamma(500, shape = 2), ncol=n_locs))
+#' mc = data.frame(cbind(matrix(rnorm(1000), ncol=n_locs)),
+#'                       matrix(rgamma(1000, shape = 2), ncol=n_locs))
+#' rc = data.frame(cbind(matrix(rnorm(1000), ncol=n_locs)),
+#'                       matrix(rgamma(1000, shape = 2), ncol=n_locs))
+#'
+#' colnames(mp) = colnames(mc) = colnames(rc) = paste0(rep(c("tas.", "pr."),
+#'                                                 each = n_locs), c(1:n_locs))
+#'
+#' time_c = as.Date("2000-01-01") + 0:99
+#' time_p = as.Date("2020-01-01") + 0:49
+#'
+#' # Simulate 10 locations
+#' locs <- data.frame(
+#' Id = 1:n_locs,
+#' Lon = runif(n_locs, -180, 180),
+#' Lat = runif(n_locs, -90, 90),
+#' Altitude = runif(n_locs, 0, 3000)
+#' )
+#' var_names = c("tas", "pr")
+#'
+#' families = list("tas" = gaussian(), "pr" = Gamma(link = "log"))
+#'
+#' fit = get_GAMs(
+#' mp = mp,
+#' mc = mc,
+#' rc = rc,
+#' time_p = time_p,
+#' time_c = time_c,
+#' locs = locs,
+#' var_names = var_names,
+#' families = families,
+#' cores = 5
+#' )
+#'
+#' comp_mc = extract_components(fit$mc, mc, locs, time_c)
+#'
+extract_components <- function(gam_list, data, locs, time) {
+
+  stopifnot(length(time) == nrow(data))
+
+  # Variable names inferred from GAM list
+  vars <- names(gam_list)
+
+  # Convert data into long format with explicit Id and time columns
+  data_long = transform_to_wide_format(data, locs, vars, time)
+
+  # Unique spatial/location identifiers
+  id_locs = unique(data_long$Id)
+
+  # Number of observations in long format
+  n <- nrow(data_long)
+
+  # Initialize data frames for components
+  seasonality_df <- data.frame(matrix(NA, nrow = n, ncol = length(vars)))
+  colnames(seasonality_df) <- vars
+  remainder_orig_df = seasonality_df
+
+  # Loop over variables and extract components
+  for (var in vars) {
+
+    # Corresponding GAM fit
+    fit <- gam_list[[var]]
+
+    # Extract fitted mean (seasonal component)
+    mu_hat <- mgcv::predict.gam(fit, type = "response")
+    seasonality_df[[var]] <- mu_hat
+
+    # Compute PIT values (remainder on copula scale)
+    pits = compute_pit(data_long[[var]], fit)
+    remainder_orig_df[[var]] <- pits
+  }
+
+  # Convert remainder PITs to wide format (variable.location)
+  remainder_orig_wide = remainder_orig_df %>%
+    dplyr::mutate(
+      Id = data_long$Id,
+      time = data_long$time
+    ) %>%
+    tidyr::pivot_wider(
+      id_cols = time,
+      names_from = Id,
+      values_from = all_of(vars),
+      names_sep = "."
+    ) %>%
+    dplyr::select(-time)
+
+  # Convert seasonality component to wide format
+  seasonality_wide = seasonality_df %>%
+    dplyr::mutate(
+      Id = data_long$Id,
+      time = data_long$time
+    ) %>%
+    tidyr::pivot_wider(
+      id_cols = time,
+      names_from = Id,
+      values_from = all_of(vars),
+      names_sep = "."
+    ) %>%
+    dplyr::select(-time)
+
+  return(list(
+    seasonality    = seasonality_wide,
+    remainder      = rvinecopulib::pseudo_obs(remainder_orig_wide),
+    remainder_orig = remainder_orig_wide
+  ))
+}

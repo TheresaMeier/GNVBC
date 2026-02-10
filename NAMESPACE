@@ -2,6 +2,7 @@
 
 export(build_gam_formula)
 export(compute_pit)
+export(extract_components)
 export(get_GAMs)
 export(get_nested_vine)
 export(get_spatial_mask)
