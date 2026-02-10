@@ -4,7 +4,18 @@
 \alias{get_GAMs}
 \title{Fit tensor-product GAMs for multiple climate datasets}
 \usage{
-get_GAMs(mp, mc, rc, locs, time_c, time_p, var_names, families, cores = NULL)
+get_GAMs(
+  mp,
+  mc,
+  rc,
+  locs,
+  time_c,
+  time_p,
+  var_names,
+  families,
+  cores = NULL,
+  extra_smooths = NULL
+)
 }
 \arguments{
 \item{mp}{Data frame with modeled projection data with columns named "variable.location_id"}
@@ -24,6 +35,9 @@ get_GAMs(mp, mc, rc, locs, time_c, time_p, var_names, families, cores = NULL)
 \item{families}{Named list of family objects for each variable (e.g., list(tas = gaussian(), pr = Tweedie()))}
 
 \item{cores}{Number of parallel workers used for model fitting; if NULL or 1, runs sequentially}
+
+\item{extra_smooths}{Optional character vector of additional predictor variable names to include as smooth terms (e.g., c("elev") or c("s(elev, k=5)"));
+if provided, these will be added as separate smooth terms in the GAM formula.}
 }
 \value{
 Nested list of fitted GAM objects with structure:\verb{[[dataset]][[variable]]}
@@ -52,7 +66,8 @@ time_c = as.Date("2000-01-01") + 0:99
 time_p = as.Date("2020-01-01") + 0:49
 
 # Simulate 5 locations
-locs = data.frame(Lon = runif(5, -180, 180), Lat = runif(5, -90, 90), Id = 1:5)
+locs = data.frame(Lon = runif(5, -180, 180), Lat = runif(5, -90, 90), Id = 1:5,
+                  Altitude = runif(5, 0, 3000))
 
 var_names = c("tas", "pr")
 
@@ -68,6 +83,20 @@ locs = locs,
 var_names = var_names,
 families = families,
 cores = 5
+)
+
+# With extra smooths
+test = get_GAMs(
+mp = mp,
+mc = mc,
+rc = rc,
+time_p = time_p,
+time_c = time_c,
+locs = locs,
+var_names = var_names,
+families = families,
+cores = 5,
+extra_smooths = c("s(Altitude, k=3)")
 )
 
 }
