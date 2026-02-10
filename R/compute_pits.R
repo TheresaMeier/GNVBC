@@ -279,3 +279,104 @@ extract_components <- function(gam_list, data, locs, time) {
     remainder_orig = remainder_orig_wide
   ))
 }
+
+#' @title Inverse CDF from PIT values for various distributions
+#' @description Maps PIT values back to the original data scale using the inverse
+#' cumulative distribution function (quantile function) of the specified
+#' distribution family.
+#'
+#' @param p Numeric vector of PIT values in `[0, 1]`
+#' @param mu Numeric vector of mean parameters from the fitted GAM
+#' @param phi Numeric vector of dispersion parameters from the fitted GAM
+#' @param family_name Character string indicating the distribution family
+#' (e.g., "gaussian", "Gamma", "Tweedie", "Beta", "Poisson", "Binomial")
+#' @param power Numeric value of the power parameter for the Tweedie distribution (required if family is Tweedie)
+#' @param size Numeric value of the size parameter for the Binomial distribution (required if family is Binomial)
+#'
+#' @returns Numeric vector of values on the original data scale corresponding to the input PIT values
+#' @export
+#'
+#' @examples
+#' p = runif(100)
+#' phi = 4
+#'
+#' # Gaussian
+#' mu = rnorm(100, mean = 5, sd = 2)
+#' inv_gaussian = inverse_cdf_from_pit(p, mu, phi, "gaussian")
+#'
+#' # Gamma
+#' mu = rgamma(100, shape = 2, rate = 0.5)
+#' inv_gamma = inverse_cdf_from_pit(p, mu, phi, "Gamma")
+#'
+#' # Tweedie
+#' mu = runif(100, 0.1, 10)
+#' inv_tweedie = inverse_cdf_from_pit(p, mu, phi, "Tweedie", power = 1.5)
+#'
+#' # Beta
+#' mu = runif(100, 0.1, 0.9)
+#' inv_beta = inverse_cdf_from_pit(p, mu, phi, "Beta")
+#'
+#'# Poisson
+#' mu = rpois(100, lambda = 5)
+#' inv_poisson = inverse_cdf_from_pit(p, mu, phi, "Poisson")
+#'
+#' # Binomial
+#' mu = rbinom(100, size = 1, prob = 0.3)
+#' inv_binomial = inverse_cdf_from_pit(p, mu, phi, "Binomial", size = 1)
+
+inverse_cdf_from_pit <- function(p, mu, phi, family_name, power = NULL, size = 1) {
+
+  # safety
+  if (any(p < 0 | p > 1, na.rm = TRUE)) {
+    stop("p must be in [0, 1]")
+  }
+
+  # --- Gaussian distribution ---
+  if (grepl("^gaussian", family_name, ignore.case = TRUE)) {
+
+    return(stats::qnorm(p, mean = mu, sd = sqrt(phi)))
+
+    # --- Gamma distribution ---
+  } else if (grepl("^Gamma", family_name, ignore.case = TRUE)) {
+
+    shape <- 1 / phi
+    scale <- phi * mu
+    return(stats::qgamma(p, shape = shape, scale = scale))
+
+    # --- Inverse Gaussian distribution ---
+  } else if (grepl("^inverse.gaussian", family_name, ignore.case = TRUE)) {
+
+    return(statmod::qinvgauss(p, mean = mu, shape = 1 / phi))
+
+    # --- Beta distribution ---
+  } else if (grepl("^Beta", family_name, ignore.case = TRUE)) {
+
+    shape1 <- mu * phi
+    shape2 <- (1 - mu) * phi
+    return(stats::qbeta(p, shape1 = shape1, shape2 = shape2))
+
+    # --- Tweedie distribution ---
+  } else if (grepl("^Tweedie", family_name, ignore.case = TRUE)) {
+
+    if (is.null(power)) {
+      stop("Tweedie inverse CDF requires 'power'")
+    }
+
+    return(tweedie::qtweedie(p, mu = mu, phi = phi, power = power))
+
+    # --- Poisson distribution (discrete) ---
+  } else if (grepl("^poisson", family_name, ignore.case = TRUE)) {
+
+    return(stats::qpois(p, lambda = mu))
+
+    # --- Binomial distribution (discrete) ---
+  } else if (grepl("^binomial", family_name, ignore.case = TRUE)) {
+
+    return(stats::qbinom(p, size = size, prob = mu))
+
+    # --- Unsupported distribution ---
+  } else {
+    stop(paste("Inverse CDF not implemented for family:", family_name))
+  }
+}
+

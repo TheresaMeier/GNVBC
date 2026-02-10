@@ -214,3 +214,34 @@ test_that("wrong time length triggers error", {
 })
 
 
+test_that("inverse_cdf_from_pit works for all supported families", {
+
+  p <- runif(100)
+
+  expect_type(
+    inverse_cdf_from_pit(p, mu = 0, phi = 1, family_name = "gaussian"),
+    "double"
+  )
+
+  expect_type(
+    inverse_cdf_from_pit(p, mu = 2, phi = 0.5, family_name = "Gamma"),
+    "double"
+  )
+
+  expect_type(
+    inverse_cdf_from_pit(p, mu = 0.5, phi = 20, family_name = "Beta"),
+    "double"
+  )
+
+  expect_type(
+    inverse_cdf_from_pit(p, mu = 5, phi = 1, family_name = "poisson"),
+    "double"
+  )
+
+  expect_type(
+    inverse_cdf_from_pit(p, mu = 0.3, phi = NA, family_name = "binomial", size = 1),
+    "double"
+  )
+})
+
+
