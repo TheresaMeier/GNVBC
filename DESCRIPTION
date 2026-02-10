@@ -19,9 +19,12 @@ Imports:
     lubridate,
     magrittr,
     Matrix,
-    mgcv,
     purrr,
+    rlang,
     rvinecopulib,
     stats,
     tidyr,
+    tweedie,
     wdm
+Depends:
+    mgcv

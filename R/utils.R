@@ -79,6 +79,7 @@ reorder_dataset <- function(data,
 #' - Lon  : Longitude
 #' - One column per climate variable
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #' @export
 #'
 transform_to_wide_format <- function(data, locs, vars, time) {
