@@ -32,7 +32,7 @@ get_GAMs(
 
 \item{var_names}{Character vector of climate variable names (e.g., c("tas", "pr"))}
 
-\item{families}{Named list of family objects for each variable (e.g., list(tas = gaussian(), pr = Tweedie()))}
+\item{families}{Named list of family objects for each variable (e.g., list(tas = gaussian(), pr = tw(link = "log")))}
 
 \item{cores}{Number of parallel workers used for model fitting; if NULL or 1, runs sequentially}
 
