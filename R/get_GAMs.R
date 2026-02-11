@@ -17,7 +17,7 @@
 #' @param time_c Date vector corresponding to rows of calibration datasets (mc, rc)
 #' @param time_p Date vector corresponding to rows of projection dataset (mp)
 #' @param var_names Character vector of climate variable names (e.g., c("tas", "pr"))
-#' @param families Named list of family objects for each variable (e.g., list(tas = gaussian(), pr = Tweedie()))
+#' @param families Named list of family objects for each variable (e.g., list(tas = gaussian(), pr = tw(link = "log")))
 #' @param cores Number of parallel workers used for model fitting; if NULL or 1, runs sequentially
 #' @param extra_smooths Optional character vector of additional predictor variable names to include as smooth terms (e.g., c("elev") or c("s(elev, k=5)"));
 #' if provided, these will be added as separate smooth terms in the GAM formula.
