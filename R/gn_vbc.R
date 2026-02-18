@@ -97,19 +97,25 @@
 #'
 #' # plot(mp_corrected$rvine_mp, var_names = "use")
 #'
-gn_vbc <- function(mp, mc, rc, var_names = colnames(rc),
-                    time_c,           # time vector of calibration period
-                    time_p,           # time vector of projection period
-                    locs,             # data frame with Lon, Lat, and Id
-                    nrows, ncols,
-                    families,
-                    fixed = TRUE,     # indicator for fixed local vine structure
-                    mask = TRUE,      # apply spatial adjacency mask
-                    bridge_var = NULL,
-                    trunc_lvl = NULL,
-                    seed = 123, cores = 11,
-                    ...)
-{
+gn_vbc <- function(
+  mp,
+  mc,
+  rc,
+  var_names = colnames(rc),
+  time_c, # time vector of calibration period
+  time_p, # time vector of projection period
+  locs, # data frame with Lon, Lat, and Id
+  nrows,
+  ncols,
+  families,
+  fixed = TRUE, # indicator for fixed local vine structure
+  mask = TRUE, # apply spatial adjacency mask
+  bridge_var = NULL,
+  trunc_lvl = NULL,
+  seed = 123,
+  cores = 11,
+  ...
+) {
   # Extract unique variable names (strip location suffixes)
   vars_unique = unique(sub("\\..*$", "", var_names))
 
@@ -118,9 +124,16 @@ gn_vbc <- function(mp, mc, rc, var_names = colnames(rc),
   # ---------------------------------------------------------------------------
 
   gam_fit = get_GAMs(
-      mp, mc, rc, locs, time_c, time_p,
-      vars_unique, families, cores = cores
-    )
+    mp,
+    mc,
+    rc,
+    locs,
+    time_c,
+    time_p,
+    vars_unique,
+    families,
+    cores = cores
+  )
 
   # Extract seasonal means and PIT-based remainders
   components_mc = extract_components(gam_fit$mc, mc, locs, time_c)
@@ -132,28 +145,32 @@ gn_vbc <- function(mp, mc, rc, var_names = colnames(rc),
   # ---------------------------------------------------------------------------
 
   mpu <- get_nested_vine(
-      components_mp$remainder,
-      nrows = nrows, ncols = ncols,
-      fixed = fixed,
-      mask = mask,
-      bridge_var = bridge_var,
-      ids = locs$Id,
-      trunc_lvl = trunc_lvl,
-      seed = seed, cores = cores,
-      ...
-    )
+    components_mp$remainder,
+    nrows = nrows,
+    ncols = ncols,
+    fixed = fixed,
+    mask = mask,
+    bridge_var = bridge_var,
+    ids = locs$Id,
+    trunc_lvl = trunc_lvl,
+    seed = seed,
+    cores = cores,
+    ...
+  )
 
   rcu <- get_nested_vine(
-      components_rc$remainder,
-      nrows = nrows, ncols = ncols,
-      fixed = fixed,
-      mask = mask,
-      bridge_var = bridge_var,
-      ids = locs$Id,
-      trunc_lvl = trunc_lvl,
-      seed = seed, cores = cores,
-      ...
-    )
+    components_rc$remainder,
+    nrows = nrows,
+    ncols = ncols,
+    fixed = fixed,
+    mask = mask,
+    bridge_var = bridge_var,
+    ids = locs$Id,
+    trunc_lvl = trunc_lvl,
+    seed = seed,
+    cores = cores,
+    ...
+  )
 
   # ---------------------------------------------------------------------------
   # Step 3: (Inverse) Rosenblatt transform
@@ -161,15 +178,15 @@ gn_vbc <- function(mp, mc, rc, var_names = colnames(rc),
 
   #  Rosenblatt transform model PITs using model vine
   u = rvinecopulib::rosenblatt(
-      as.matrix(components_mp$remainder),
-      mpu$vine_level3
-    )
+    as.matrix(components_mp$remainder),
+    mpu$vine_level3
+  )
 
   # Inverse Rosenblatt transform to reference dependence structure
   u_mph = rvinecopulib::inverse_rosenblatt(
-      u,
-      rcu$vine_level3
-    )
+    u,
+    rcu$vine_level3
+  )
 
   # ---------------------------------------------------------------------------
   # Step 4: Backtransform corrected PITs to data space via inverse CDFs
@@ -178,7 +195,9 @@ gn_vbc <- function(mp, mc, rc, var_names = colnames(rc),
   # Prepare corrected PITs for backtransformation
   u_mph_wide = transform_to_wide_format(
     data.frame(u_mph),
-    locs, vars_unique, time_p
+    locs,
+    vars_unique,
+    time_p
   )
 
   x_mph_wide = inverse_PITs(gam_fit, u_mph_wide, u_mph, components_rc)
@@ -195,7 +214,7 @@ gn_vbc <- function(mp, mc, rc, var_names = colnames(rc),
 
   return(list(
     corrected_mp = x_mph,
-    rvine_mp     = mpu$vine_level3,
-    rvine_rc     = rcu$vine_level3
+    rvine_mp = mpu$vine_level3,
+    rvine_rc = rcu$vine_level3
   ))
 }

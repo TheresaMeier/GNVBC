@@ -39,18 +39,18 @@
 #'                         ids = c(1,2,3), family_set = "tll", cores = 12)
 #'
 get_nested_vine <- function(
-    data,
-    nrows, ncols,
-    var_types = rep("c", ncol(data)),
-    fixed = TRUE,
-    mask = TRUE,
-    bridge_var = NULL,
-    ids = NULL,
-    trunc_lvl = NULL,
-    seed = 123,
-    ...
+  data,
+  nrows,
+  ncols,
+  var_types = rep("c", ncol(data)),
+  fixed = TRUE,
+  mask = TRUE,
+  bridge_var = NULL,
+  ids = NULL,
+  trunc_lvl = NULL,
+  seed = 123,
+  ...
 ) {
-
   # Ensure reproducibility
   set.seed(seed)
   # ---------------------------------------------------------------------------
@@ -105,7 +105,6 @@ get_nested_vine <- function(
   # Helper: Fit spatial vine copula for a single variable
   # ---------------------------------------------------------------------------
   fit_var_vine <- function(iVar, var, ...) {
-
     # Column indices corresponding to the variable across locations
     idx <- get_var_indices(iVar)
 
@@ -119,7 +118,6 @@ get_nested_vine <- function(
     # Optional spatial structure construction via minimum spanning tree
     # -------------------------------------------------------------------------
     if (mask) {
-
       # Compute Kendall's tau matrix as dependence measure
       ktau_matrix <- wdm::wdm(data_matrix[, idx], method = "kendall")
 
@@ -153,7 +151,6 @@ get_nested_vine <- function(
   # Level 1: Spatial dependence within variables
   # ---------------------------------------------------------------------------
   rvs_level1 <- if (fixed) {
-
     # Fixed mode: fit spatial structure for one random variable
     iVar <- sample(1:nvars, 1)
     vine <- fit_var_vine(iVar, vars[iVar], ...)
@@ -162,9 +159,7 @@ get_nested_vine <- function(
     output[["rvs_level1"]] = vine$structure
 
     vine$structure
-
   } else {
-
     # Flexible mode: fit separate spatial structure for each variable
     result_vines <- lapply(seq_len(nvars), function(iVar) {
       vine <- fit_var_vine(iVar, vars[iVar], ...)
@@ -214,8 +209,5 @@ get_nested_vine <- function(
   output[["vine_level3"]] <- vine_level3
   output[["rvs_level3"]] <- vine_level3$structure
 
-
   return(output)
 }
-
-

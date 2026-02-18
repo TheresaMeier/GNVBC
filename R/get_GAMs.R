@@ -73,15 +73,17 @@
 #' )
 #'
 get_GAMs <- function(
-    mp, mc, rc,
-    locs,
-    time_c, time_p,
-    var_names,
-    families,
-    cores = NULL,
-    extra_smooths = NULL
+  mp,
+  mc,
+  rc,
+  locs,
+  time_c,
+  time_p,
+  var_names,
+  families,
+  cores = NULL,
+  extra_smooths = NULL
 ) {
-
   # ---------------------------------------------------------------------------
   # Step 1: Transform datasets
   # ---------------------------------------------------------------------------
@@ -98,7 +100,7 @@ get_GAMs <- function(
 
   inputs <- expand.grid(
     dataset = names(dfs),
-    var     = var_names,
+    var = var_names,
     stringsAsFactors = FALSE
   )
 
@@ -115,26 +117,22 @@ get_GAMs <- function(
   # ---------------------------------------------------------------------------
 
   fit_one <- function(dataset, var) {
-
     form <- build_gam_formula(var, extra_smooths)
 
     mgcv::bam(
       formula = form,
-      data    = dfs[[dataset]],
-      family  = families[[var]]
+      data = dfs[[dataset]],
+      family = families[[var]]
     )
   }
 
   if (!is.null(cores) && cores > 1) {
-
     fits <- furrr::future_pmap(
       inputs,
       fit_one,
       .options = furrr::furrr_options(seed = TRUE)
     )
-
   } else {
-
     fits <- purrr::pmap(
       inputs,
       fit_one
@@ -160,21 +158,19 @@ get_GAMs <- function(
 #' @returns A formula object for use in mgcv::bam(), with a base tensor-product smooth for time and space, plus any specified extra smooths.
 #' @export
 build_gam_formula <- function(response, extra_smooths = NULL) {
-
   # Base smooth: time × space
   base_term <- "te(t, Lat, Lon, bs = c('cc', 'tp', 'tp'))"
 
   rhs_terms <- base_term
 
   if (!is.null(extra_smooths)) {
-
     extra_terms <- purrr::map_chr(
       extra_smooths,
       function(x) {
         if (grepl("\\(", x)) {
-          x                   # full mgcv term supplied by user
+          x # full mgcv term supplied by user
         } else {
-          paste0("s(", x, ")")  # shorthand
+          paste0("s(", x, ")") # shorthand
         }
       }
     )

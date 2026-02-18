@@ -2,8 +2,7 @@ test_that("get_nested_vine returns expected components", {
   set.seed(1)
 
   data <- matrix(runif(120), ncol = 6)
-  colnames(data) <- c("tas.1", "tas.2", "tas.3",
-                      "pr.1",  "pr.2",  "pr.3")
+  colnames(data) <- c("tas.1", "tas.2", "tas.3", "pr.1", "pr.2", "pr.3")
 
   res <- get_nested_vine(
     data,
@@ -33,8 +32,7 @@ test_that("get_nested_vine returns expected components", {
   set.seed(1)
 
   data <- matrix(runif(120), ncol = 6)
-  colnames(data) <- c("tas.1", "tas.2", "tas.3",
-                      "pr.1",  "pr.2",  "pr.3")
+  colnames(data) <- c("tas.1", "tas.2", "tas.3", "pr.1", "pr.2", "pr.3")
 
   res <- get_nested_vine(
     data,
@@ -64,17 +62,24 @@ test_that("get_nested_vine returns expected components", {
 
 test_that("results are reproducible given seed", {
   data <- matrix(runif(120), ncol = 6)
-  colnames(data) <- c("tas.1", "tas.2", "tas.3",
-                      "pr.1",  "pr.2",  "pr.3")
+  colnames(data) <- c("tas.1", "tas.2", "tas.3", "pr.1", "pr.2", "pr.3")
 
   res1 <- get_nested_vine(
-    data, nrows = 1, ncols = 3,
-    fixed = TRUE, seed = 42, mask = FALSE
+    data,
+    nrows = 1,
+    ncols = 3,
+    fixed = TRUE,
+    seed = 42,
+    mask = FALSE
   )
 
   res2 <- get_nested_vine(
-    data, nrows = 1, ncols = 3,
-    fixed = TRUE, seed = 42, mask = FALSE
+    data,
+    nrows = 1,
+    ncols = 3,
+    fixed = TRUE,
+    seed = 42,
+    mask = FALSE
   )
 
   expect_identical(
@@ -85,8 +90,7 @@ test_that("results are reproducible given seed", {
 
 test_that("invalid bridge_var throws error", {
   data <- matrix(runif(120), ncol = 6)
-  colnames(data) <- c("tas.1", "tas.2", "tas.3",
-                      "pr.1",  "pr.2",  "pr.3")
+  colnames(data) <- c("tas.1", "tas.2", "tas.3", "pr.1", "pr.2", "pr.3")
 
   expect_error(
     get_nested_vine(
@@ -113,4 +117,3 @@ test_that("full model fits on minimal data", {
 
   expect_s3_class(res$vine_level3, "vinecop")
 })
-

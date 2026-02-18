@@ -54,17 +54,15 @@
 #' pits_binom = compute_pit(dat$y, b)
 #'
 
-
 compute_pit <- function(y, fit) {
-
   family_name <- fit$family$family
   if (grepl("Tweedie", family_name)) {
     family_name <- "Tweedie"
   } else if (grepl("Beta", family_name)) {
     family_name <- "betar"
   }
-  mu_hat      <- mgcv::predict.gam(fit, type = "response")
-  phi_hat     <- fit$sig2
+  mu_hat <- mgcv::predict.gam(fit, type = "response")
+  phi_hat <- fit$sig2
 
   u <- switch(
     family_name,
@@ -93,9 +91,9 @@ compute_pit <- function(y, fit) {
       power_hat <- fit$family$getTheta(TRUE)
 
       u <- tweedie::ptweedie(
-        q     = y,
-        mu    = mu_hat,
-        phi   = phi_hat,
+        q = y,
+        mu = mu_hat,
+        phi = phi_hat,
         power = power_hat
       )
 
@@ -140,14 +138,14 @@ compute_pit <- function(y, fit) {
     # Fallback
     # --------------------------------------------------
     stop(
-      "Unsupported family: ", family_name,
+      "Unsupported family: ",
+      family_name,
       call. = FALSE
     )
   )
 
   return(u)
 }
-
 
 
 #' @title Extract seasonality and remainder components from fitted GAMs
@@ -210,7 +208,6 @@ compute_pit <- function(y, fit) {
 #' comp_mc = extract_components(fit$mc, mc, locs, time_c)
 #'
 extract_components <- function(gam_list, data, locs, time) {
-
   stopifnot(length(time) == nrow(data))
 
   # Variable names inferred from GAM list
@@ -232,7 +229,6 @@ extract_components <- function(gam_list, data, locs, time) {
 
   # Loop over variables and extract components
   for (var in vars) {
-
     # Corresponding GAM fit
     fit <- gam_list[[var]]
 
@@ -274,8 +270,8 @@ extract_components <- function(gam_list, data, locs, time) {
     dplyr::select(-time)
 
   return(list(
-    seasonality    = seasonality_wide,
-    remainder      = rvinecopulib::pseudo_obs(remainder_orig_wide),
+    seasonality = seasonality_wide,
+    remainder = rvinecopulib::pseudo_obs(remainder_orig_wide),
     remainder_orig = remainder_orig_wide
   ))
 }
@@ -324,8 +320,14 @@ extract_components <- function(gam_list, data, locs, time) {
 #' mu = rbinom(100, size = 1, prob = 0.3)
 #' inv_binomial = inverse_cdf_from_pit(p, mu, phi, "Binomial", size = 1)
 
-inverse_cdf_from_pit <- function(p, mu, phi, family_name, power = NULL, size = 1) {
-
+inverse_cdf_from_pit <- function(
+  p,
+  mu,
+  phi,
+  family_name,
+  power = NULL,
+  size = 1
+) {
   # safety
   if (any(p < 0 | p > 1, na.rm = TRUE)) {
     stop("p must be in [0, 1]")
@@ -333,31 +335,26 @@ inverse_cdf_from_pit <- function(p, mu, phi, family_name, power = NULL, size = 1
 
   # --- Gaussian distribution ---
   if (grepl("^gaussian", family_name, ignore.case = TRUE)) {
-
     return(stats::qnorm(p, mean = mu, sd = sqrt(phi)))
 
     # --- Gamma distribution ---
   } else if (grepl("^Gamma", family_name, ignore.case = TRUE)) {
-
     shape <- 1 / phi
     scale <- phi * mu
     return(stats::qgamma(p, shape = shape, scale = scale))
 
     # --- Inverse Gaussian distribution ---
   } else if (grepl("^inverse.gaussian", family_name, ignore.case = TRUE)) {
-
     return(statmod::qinvgauss(p, mean = mu, shape = 1 / phi))
 
     # --- Beta distribution ---
   } else if (grepl("^Beta", family_name, ignore.case = TRUE)) {
-
     shape1 <- mu * phi
     shape2 <- (1 - mu) * phi
     return(stats::qbeta(p, shape1 = shape1, shape2 = shape2))
 
     # --- Tweedie distribution ---
   } else if (grepl("^Tweedie", family_name, ignore.case = TRUE)) {
-
     if (is.null(power)) {
       stop("Tweedie inverse CDF requires 'power'")
     }
@@ -366,12 +363,10 @@ inverse_cdf_from_pit <- function(p, mu, phi, family_name, power = NULL, size = 1
 
     # --- Poisson distribution (discrete) ---
   } else if (grepl("^poisson", family_name, ignore.case = TRUE)) {
-
     return(stats::qpois(p, lambda = mu))
 
     # --- Binomial distribution (discrete) ---
   } else if (grepl("^binomial", family_name, ignore.case = TRUE)) {
-
     return(stats::qbinom(p, size = size, prob = mu))
 
     # --- Unsupported distribution ---
@@ -379,4 +374,3 @@ inverse_cdf_from_pit <- function(p, mu, phi, family_name, power = NULL, size = 1
     stop(paste("Inverse CDF not implemented for family:", family_name))
   }
 }
-
