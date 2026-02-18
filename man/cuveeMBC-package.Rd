@@ -4,7 +4,8 @@
 \name{cuveeMBC-package}
 \alias{cuveeMBC}
 \alias{cuveeMBC-package}
-\title{cuveeMBC: Multivariate bias correction for climate projections using GAMs and CUVEE}
+\title{cuveeMBC: Multivariate bias correction for climate projections
+using GAMs and CUVEE}
 \description{
 What the package does (one paragraph).
 }
