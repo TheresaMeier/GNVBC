@@ -32,15 +32,13 @@
 #' For Tweedie and Beta models, the additional parameters
 #' (power or precision) are extracted from the fitted GAM object.
 #'
-inverse_PITs = function(gam_fit, u_mph_wide, u_mph, components_rc){
-
+inverse_PITs = function(gam_fit, u_mph_wide, u_mph, components_rc) {
   vars_unique = names(gam_fit$rc)
 
   # Initialize corrected data container
   x_mph_wide = u_mph_wide
 
   for (var in vars_unique) {
-
     # Retrieve GAM fits
     fit <- gam_fit$rc[[var]]
 
@@ -86,12 +84,16 @@ inverse_PITs = function(gam_fit, u_mph_wide, u_mph, components_rc){
     )
 
     # Compute empirical quantiles of reference PITs
-    q_df <- sapply(cols, function(col) {
-      stats::quantile(
-        x = components_rc$remainder_orig[[col]],
-        probs = data.frame(u_mph)[col]
-      )
-    }, simplify = "data.frame")
+    q_df <- sapply(
+      cols,
+      function(col) {
+        stats::quantile(
+          x = components_rc$remainder_orig[[col]],
+          probs = data.frame(u_mph)[col]
+        )
+      },
+      simplify = "data.frame"
+    )
 
     p_var = c(t(q_df))
 
@@ -106,4 +108,3 @@ inverse_PITs = function(gam_fit, u_mph_wide, u_mph, components_rc){
   }
   x_mph_wide
 }
-

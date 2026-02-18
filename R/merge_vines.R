@@ -13,39 +13,44 @@
 #' then transforms both structures to a common natural ordering before merging.
 #' The bridge variable anchors the connection between the two levels.
 #' @export
-merge_edges_fixed_full = function(rvs_level1, rvs_level2, bridge_var){
-
+merge_edges_fixed_full = function(rvs_level1, rvs_level2, bridge_var) {
   # Step 1: Replicate level 2 structure for each spatial location
   list_rvs_level1 = list(rvs_level1)
 
   for (i in 2:rvs_level2$d) {
     rvs_level1_tmp = rvs_level1
     # Offset structure indices to correspond to location i
-    rvs_level1_tmp$order <- rvs_level1_tmp$order + (i-1) * rvs_level1$d
-    rvs_level1_tmp$struct_array <- lapply(rvs_level1_tmp$struct_array, function(x) x + (i-1) * rvs_level1$d)
+    rvs_level1_tmp$order <- rvs_level1_tmp$order + (i - 1) * rvs_level1$d
+    rvs_level1_tmp$struct_array <- lapply(
+      rvs_level1_tmp$struct_array,
+      function(x) x + (i - 1) * rvs_level1$d
+    )
     list_rvs_level1[[i]] = rvs_level1_tmp
   }
 
-  lev1_tmp  = list_rvs_level1
+  lev1_tmp = list_rvs_level1
 
   # Step 2: Extract combined ordering from all level 2 structures
   order_level1 = unlist(lapply(list_rvs_level1, function(x) x$order))
 
   # Step 3: Relabel all level 2 structures to natural order (1, 2, 3, ...)
   list_rvs_level1 <- lapply(lev1_tmp, function(x) {
-    x$order <- x$order[order(x$order)]  # Convert to natural ordering
+    x$order <- x$order[order(x$order)] # Convert to natural ordering
     x
   })
 
   # Step 4: Prepare level 1 structure for merging
   # Identify bridge variable indices for each spatial location
-  bridges = bridge_var + rvs_level1_tmp$d * seq(0,rvs_level2$d-1)
+  bridges = bridge_var + rvs_level1_tmp$d * seq(0, rvs_level2$d - 1)
 
   # Reindex level 1 structure relative to bridge variables
   order_tmp = bridges[rvs_level2$order]
 
   rvs_level2$order = order_tmp
-  rvs_level2$struct_array <- lapply(rvs_level2$struct_array, function(x) order_tmp[x])
+  rvs_level2$struct_array <- lapply(
+    rvs_level2$struct_array,
+    function(x) order_tmp[x]
+  )
   rvs_level2_orig = rvs_level2
 
   # Step 5: Transform level 1 to natural ordering
@@ -53,10 +58,16 @@ merge_edges_fixed_full = function(rvs_level1, rvs_level2, bridge_var){
   inverse_map[order_level1] <- seq_along(order_level1)
 
   rvs_level2$order = inverse_map[rvs_level2$order]
-  rvs_level2$struct_array <- lapply(rvs_level2$struct_array, function(x) inverse_map[x])
+  rvs_level2$struct_array <- lapply(
+    rvs_level2$struct_array,
+    function(x) inverse_map[x]
+  )
 
   # Step 6: Merge level 1 and level 2 structures
-  rvs_level3_tmp = rvinecopulib:::merge_rvine_structures(c(list_rvs_level1, list(rvs_level2)))
+  rvs_level3_tmp = rvinecopulib:::merge_rvine_structures(c(
+    list_rvs_level1,
+    list(rvs_level2)
+  ))
 
   # Step 7: Relabel merged structure back to original variable-location order
   rvs_level3 = rvs_level3_tmp
@@ -84,39 +95,44 @@ merge_edges_fixed_full = function(rvs_level1, rvs_level2, bridge_var){
 #' the two levels.
 #' @export
 #'
-merge_edges_individual_full = function(rvs_level1, rvs_level2, bridge_var){
-
+merge_edges_individual_full = function(rvs_level1, rvs_level2, bridge_var) {
   # Step 1: Replicate level 2 structures, one for each variable
   list_rvs_level1 = list(rvs_level1[[1]])
 
   for (i in 2:rvs_level2$d) {
     rvs_level1_tmp = rvs_level1[[i]]
     # Offset structure indices to correspond to variable i at location i
-    rvs_level1_tmp$order <- rvs_level1_tmp$order + (i-1) * rvs_level1_tmp$d
-    rvs_level1_tmp$struct_array <- lapply(rvs_level1_tmp$struct_array, function(x) x + (i-1) * rvs_level1_tmp$d)
+    rvs_level1_tmp$order <- rvs_level1_tmp$order + (i - 1) * rvs_level1_tmp$d
+    rvs_level1_tmp$struct_array <- lapply(
+      rvs_level1_tmp$struct_array,
+      function(x) x + (i - 1) * rvs_level1_tmp$d
+    )
     list_rvs_level1[[i]] = rvs_level1_tmp
   }
 
-  lev1_tmp  = list_rvs_level1
+  lev1_tmp = list_rvs_level1
 
   # Step 2: Extract combined ordering from all level 2 structures
   order_level1 = unlist(lapply(list_rvs_level1, function(x) x$order))
 
   # Step 3: Relabel all level 2 structures to natural order (1, 2, 3, ...)
   list_rvs_level1 <- lapply(lev1_tmp, function(x) {
-    x$order <- x$order[order(x$order)]  # Convert to natural ordering
+    x$order <- x$order[order(x$order)] # Convert to natural ordering
     x
   })
 
   # Step 4: Prepare level 1 structure for merging
   # Identify bridge variable indices for each spatial location
-  bridges = bridge_var + rvs_level1_tmp$d * seq(0,rvs_level2$d-1)
+  bridges = bridge_var + rvs_level1_tmp$d * seq(0, rvs_level2$d - 1)
 
   # Reindex level 1 structure relative to bridge variables
   order_tmp = bridges[rvs_level2$order]
 
   rvs_level2$order = order_tmp
-  rvs_level2$struct_array <- lapply(rvs_level2$struct_array, function(x) order_tmp[x])
+  rvs_level2$struct_array <- lapply(
+    rvs_level2$struct_array,
+    function(x) order_tmp[x]
+  )
   rvs_level2_orig = rvs_level2
 
   # Step 5: Transform level 1 to natural ordering
@@ -124,10 +140,16 @@ merge_edges_individual_full = function(rvs_level1, rvs_level2, bridge_var){
   inverse_map[order_level1] <- seq_along(order_level1)
 
   rvs_level2$order = inverse_map[rvs_level2$order]
-  rvs_level2$struct_array <- lapply(rvs_level2$struct_array, function(x) inverse_map[x])
+  rvs_level2$struct_array <- lapply(
+    rvs_level2$struct_array,
+    function(x) inverse_map[x]
+  )
 
   # Step 6: Merge level 1 and level 2 structures
-  rvs_level3_tmp = rvinecopulib:::merge_rvine_structures(c(list_rvs_level1, list(rvs_level2)))
+  rvs_level3_tmp = rvinecopulib:::merge_rvine_structures(c(
+    list_rvs_level1,
+    list(rvs_level2)
+  ))
 
   # Step 7: Relabel merged structure back to original variable-location order
   rvs_level3 = rvs_level3_tmp

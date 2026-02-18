@@ -25,7 +25,6 @@
 #' # Subset to selected grid cells only
 #' mask_sub <- get_spatial_mask(5, 5, ids = c(1, 2, 6, 7))
 get_spatial_mask <- function(rows, cols, ids = NULL) {
-
   # Total number of grid cells
   n_cells <- rows * cols
 
@@ -37,7 +36,6 @@ get_spatial_mask <- function(rows, cols, ids = NULL) {
   # Loop over grid coordinates
   for (r in 1:cols) {
     for (c in 1:rows) {
-
       # Convert 2D grid coordinates (r, c) to 1D index
       idx <- (r - 1) * rows + c
 
@@ -86,7 +84,6 @@ get_spatial_mask <- function(rows, cols, ids = NULL) {
 }
 
 
-
 #' @title Convert a spanning tree into an R-vine structure
 #' @description
 #' Transforms a graph-theoretic spanning tree into an R-vine structure
@@ -107,7 +104,6 @@ get_spatial_mask <- function(rows, cols, ids = NULL) {
 #' @details Assumes the spanning tree is connected and uses node 1 as the BFS root
 #'
 spanning_tree_to_rvine_structure <- function(spanning_tree) {
-
   # Check if graph is connected, otherwise error
   if (!igraph::is_connected(spanning_tree)) {
     stop("Input spanning_tree must be a connected graph.")
@@ -131,7 +127,6 @@ spanning_tree_to_rvine_structure <- function(spanning_tree) {
 
   # Traverse nodes in BFS order
   for (i in order) {
-
     # Find unused edges where current node appears as first endpoint
     ind_i <- which(edges[, 1] == i & !edge_used)
     for (k in ind_i) {

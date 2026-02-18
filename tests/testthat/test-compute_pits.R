@@ -1,5 +1,4 @@
 test_that("compute_pit returns valid PIT values for all supported families", {
-
   set.seed(123)
 
   # ------------------------
@@ -21,7 +20,11 @@ test_that("compute_pit returns valid PIT values for all supported families", {
     y = rgamma(100, shape = 2, rate = 0.5),
     x0 = runif(100)
   )
-  fit_gamma <- mgcv::gam(y ~ s(x0), data = dat_gamma, family = Gamma(link = "log"))
+  fit_gamma <- mgcv::gam(
+    y ~ s(x0),
+    data = dat_gamma,
+    family = Gamma(link = "log")
+  )
   pit_gamma <- compute_pit(dat_gamma$y, fit_gamma)
   expect_type(pit_gamma, "double")
   expect_true(all(pit_gamma >= 0 & pit_gamma <= 1))
@@ -87,10 +90,12 @@ test_that("compute_pit returns valid PIT values for all supported families", {
 })
 
 make_test_data <- function(n_locs = 10, n_time = 50) {
-
   set.seed(42)
 
-  data = data.frame(cbind(matrix(rnorm(n_locs * n_time), ncol=n_locs)), matrix(rgamma(500, shape = 2), ncol=n_locs))
+  data = data.frame(
+    cbind(matrix(rnorm(n_locs * n_time), ncol = n_locs)),
+    matrix(rgamma(500, shape = 2), ncol = n_locs)
+  )
   colnames(data) = paste0(rep(c("tas.", "pr."), each = n_locs), c(1:n_locs))
 
   time <- as.Date("2000-01-01") + seq_len(n_time) - 1
@@ -103,7 +108,7 @@ make_test_data <- function(n_locs = 10, n_time = 50) {
 
   families <- list(
     tas = gaussian(),
-    pr  = Gamma(link = "log")
+    pr = Gamma(link = "log")
   )
 
   gam_list <- get_GAMs(
@@ -127,14 +132,13 @@ make_test_data <- function(n_locs = 10, n_time = 50) {
 }
 
 test_that("extract_components returns expected structure", {
-
   x <- make_test_data()
 
   res <- extract_components(
     gam_list = x$gam_list,
-    data     = x$data,
-    locs     = x$locs,
-    time     = x$time
+    data = x$data,
+    locs = x$locs,
+    time = x$time
   )
 
   expect_type(res, "list")
@@ -142,11 +146,13 @@ test_that("extract_components returns expected structure", {
 })
 
 test_that("extract_components returns consistent dimensions", {
-
   x <- make_test_data()
 
   res <- extract_components(
-    x$gam_list, x$data, x$locs, x$time
+    x$gam_list,
+    x$data,
+    x$locs,
+    x$time
   )
 
   expect_equal(
@@ -161,22 +167,26 @@ test_that("extract_components returns consistent dimensions", {
 })
 
 test_that("output columns follow var.Id naming convention", {
-
   x <- make_test_data()
 
   res <- extract_components(
-    x$gam_list, x$data, x$locs, x$time
+    x$gam_list,
+    x$data,
+    x$locs,
+    x$time
   )
 
   expect_true(all(grepl("^(tas|pr)\\.\\d+$", colnames(res$seasonality))))
 })
 
 test_that("PIT values are in valid ranges", {
-
   x <- make_test_data()
 
   res <- extract_components(
-    x$gam_list, x$data, x$locs, x$time
+    x$gam_list,
+    x$data,
+    x$locs,
+    x$time
   )
 
   expect_true(all(res$remainder_orig >= 0))
@@ -187,23 +197,27 @@ test_that("PIT values are in valid ranges", {
 })
 
 test_that("extract_components is deterministic for fixed seed", {
-
   x <- make_test_data()
 
   res1 <- extract_components(
-    x$gam_list, x$data, x$locs, x$time
+    x$gam_list,
+    x$data,
+    x$locs,
+    x$time
   )
 
   res2 <- extract_components(
-    x$gam_list, x$data, x$locs, x$time
+    x$gam_list,
+    x$data,
+    x$locs,
+    x$time
   )
 
-  expect_equal(res1$seasonality,    res2$seasonality)
+  expect_equal(res1$seasonality, res2$seasonality)
   expect_equal(res1$remainder_orig, res2$remainder_orig)
 })
 
 test_that("wrong time length triggers error", {
-
   x <- make_test_data()
 
   bad_time <- x$time[-1]
@@ -215,7 +229,6 @@ test_that("wrong time length triggers error", {
 
 
 test_that("inverse_cdf_from_pit works for all supported families", {
-
   p <- runif(100)
 
   expect_type(
@@ -239,9 +252,13 @@ test_that("inverse_cdf_from_pit works for all supported families", {
   )
 
   expect_type(
-    inverse_cdf_from_pit(p, mu = 0.3, phi = NA, family_name = "binomial", size = 1),
+    inverse_cdf_from_pit(
+      p,
+      mu = 0.3,
+      phi = NA,
+      family_name = "binomial",
+      size = 1
+    ),
     "double"
   )
 })
-
-

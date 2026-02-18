@@ -16,10 +16,11 @@
 #' @returns Data frame with columns reordered according to the selected strategy
 #' @export
 #'
-reorder_dataset <- function(data,
-                            direction = c("variable-major", "location-major"),
-                            order = NULL) {
-
+reorder_dataset <- function(
+  data,
+  direction = c("variable-major", "location-major"),
+  order = NULL
+) {
   # ---------------------------------------------------------------------------
   # Step 1: Extract unique variable names (text before the dot)
   # ---------------------------------------------------------------------------
@@ -39,21 +40,17 @@ reorder_dataset <- function(data,
   # Step 3: Construct new column order
   # ---------------------------------------------------------------------------
   if (direction == "variable-major") {
-
     # Group columns by variable:
     # var1.loc1, var1.loc2, ..., var2.loc1, var2.loc2, ...
     new_order <- as.vector(
       sapply(var_names, function(v) paste0(v, ".", loc_numbers))
     )
-
   } else if (direction == "location-major") {
-
     # Group columns by location:
     # var1.loc1, var2.loc1, ..., var1.loc2, var2.loc2, ...
     new_order <- as.vector(
       sapply(loc_numbers, function(i) paste0(var_names, ".", i))
     )
-
   } else {
     stop("Please select either 'variable-major' or 'location-major' ordering.")
   }
@@ -83,7 +80,6 @@ reorder_dataset <- function(data,
 #' @export
 #'
 transform_to_wide_format <- function(data, locs, vars, time) {
-
   # ---------------------------------------------------------------------------
   # Step 1: Select columns corresponding to requested variables
   # ---------------------------------------------------------------------------
@@ -113,8 +109,7 @@ transform_to_wide_format <- function(data, locs, vars, time) {
     ) %>%
     dplyr::mutate(
       Id = as.numeric(gsub("\\D+", "", .data$Id)),
-      t  = lubridate::yday(time)   # Day-of-year for cyclic temporal smoothing
+      t = lubridate::yday(time) # Day-of-year for cyclic temporal smoothing
     ) %>%
     dplyr::left_join(locs, by = "Id")
 }
-

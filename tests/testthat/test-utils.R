@@ -5,24 +5,37 @@ test_that("reordering of data frames works", {
   colnames(data) <- c("var1.loc1", "var1.loc2", "var2.loc1", "var2.loc2")
 
   # Test correct reordering
-  expect_equal(reorder_dataset(data, direction = "variable-major"),
-               data[, c("var1.loc1", "var1.loc2", "var2.loc1", "var2.loc2")])
-  expect_equal(reorder_dataset(data, direction = "variable-major", order = c(2,1)),
-               data[, c("var2.loc1", "var2.loc2", "var1.loc1", "var1.loc2")])
-  expect_equal(reorder_dataset(data, direction = "location-major"),
-               data[, c("var1.loc1", "var2.loc1", "var1.loc2", "var2.loc2")])
-  expect_equal(reorder_dataset(data, direction = "location-major", order = c(2,1)),
-               data[, c("var2.loc1", "var1.loc1", "var2.loc2", "var1.loc2")])
+  expect_equal(
+    reorder_dataset(data, direction = "variable-major"),
+    data[, c("var1.loc1", "var1.loc2", "var2.loc1", "var2.loc2")]
+  )
+  expect_equal(
+    reorder_dataset(data, direction = "variable-major", order = c(2, 1)),
+    data[, c("var2.loc1", "var2.loc2", "var1.loc1", "var1.loc2")]
+  )
+  expect_equal(
+    reorder_dataset(data, direction = "location-major"),
+    data[, c("var1.loc1", "var2.loc1", "var1.loc2", "var2.loc2")]
+  )
+  expect_equal(
+    reorder_dataset(data, direction = "location-major", order = c(2, 1)),
+    data[, c("var2.loc1", "var1.loc1", "var2.loc2", "var1.loc2")]
+  )
 
-  expect_error(reorder_dataset(data, direction = "invalid-direction"),
-               "Please select either 'variable-major' or 'location-major' ordering.")
+  expect_error(
+    reorder_dataset(data, direction = "invalid-direction"),
+    "Please select either 'variable-major' or 'location-major' ordering."
+  )
 
-  expect_error(reorder_dataset(data, direction = "variable-major", order = c("var1", "var2")))
+  expect_error(reorder_dataset(
+    data,
+    direction = "variable-major",
+    order = c("var1", "var2")
+  ))
 })
 
 
 test_that("transform_to_wide_format returns correct structure and values", {
-
   data <- data.frame(
     var1.1 = c(1, 2, 3),
     var1.2 = c(4, 5, 6),
@@ -33,7 +46,7 @@ test_that("transform_to_wide_format returns correct structure and values", {
   time <- as.Date("2000-01-01") + 0:2
 
   locs <- data.frame(
-    Id  = c(1,2),
+    Id = c(1, 2),
     Lat = c(10, 20),
     Lon = c(30, 40)
   )

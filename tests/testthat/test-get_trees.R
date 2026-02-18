@@ -3,7 +3,7 @@ test_that("spatial grid derivation works", {
 
   # Correct class and dimensions
   expect_s4_class(mask, "dgCMatrix")
-  expect_equal(dim(mask), c(4*6, 4*6))
+  expect_equal(dim(mask), c(4 * 6, 4 * 6))
 
   # Symmetry and no self-loops
   expect_equal(mask, Matrix::t(mask))
@@ -24,25 +24,24 @@ test_that("spatial grid derivation works", {
   mask <- get_spatial_mask(2, 2)
 
   expected <- Matrix::sparseMatrix(
-    i = c(1,1,1,2,2,2,3,3,3,4,4,4),
-    j = c(2,3,4,1,3,4,1,2,4,1,2,3),
+    i = c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4),
+    j = c(2, 3, 4, 1, 3, 4, 1, 2, 4, 1, 2, 3),
     x = rep(1, 12),
-    dims = c(4,4)
+    dims = c(4, 4)
   )
 
   expect_equal(mask, expected)
 
   # Subsetting by ids preserves adjacency structure
-  ids = c(1,5,6,10,15)
+  ids = c(1, 5, 6, 10, 15)
   full_mask <- get_spatial_mask(5, 3)
-  sub_mask  <- get_spatial_mask(5, 3, ids)
+  sub_mask <- get_spatial_mask(5, 3, ids)
 
   expect_equal(dim(sub_mask), c(length(ids), length(ids)))
   expect_equal(sub_mask, full_mask[ids, ids])
 })
 
 test_that("spanning_tree_to_rvine_structure returns valid R-vine structure", {
-
   set.seed(1)
   g <- igraph::make_tree(5, children = 2, mode = "undirected")
 
@@ -58,7 +57,6 @@ test_that("spanning_tree_to_rvine_structure returns valid R-vine structure", {
     spanning_tree_to_rvine_structure(g),
     "Input spanning_tree must be a connected graph."
   )
-
 
   # R-vine order is a permutation of graph nodes
   g <- igraph::make_tree(6, children = 2, mode = "undirected")
@@ -78,10 +76,9 @@ test_that("spanning_tree_to_rvine_structure returns valid R-vine structure", {
   expect_equal(length(first_tree), igraph::vcount(g) - 1)
   expect_true(all(first_tree %in% seq_len(igraph::vcount(g))))
 
-
   # Known small tree produces expected R-vine structure
   g <- igraph::make_graph(
-    edges = c(1,2, 2,3, 2,4),
+    edges = c(1, 2, 2, 3, 2, 4),
     directed = FALSE
   )
 
