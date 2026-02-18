@@ -70,7 +70,7 @@ merge_edges_fixed_full <- function(rvs_level1, rvs_level2, bridge_var) {
   )
 
   # Step 6: Merge level 1 and level 2 structures
-  rvs_level3_tmp <- rvinecopulib:::merge_rvine_structures(c(
+  rvs_level3_tmp <- merge_rvine_structures(c(
     list_rvs_level1,
     list(rvs_level2)
   ))
@@ -154,7 +154,7 @@ merge_edges_individual_full <- function(rvs_level1, rvs_level2, bridge_var) {
   )
 
   # Step 6: Merge level 1 and level 2 structures
-  rvs_level3_tmp <- rvinecopulib:::merge_rvine_structures(c(
+  rvs_level3_tmp <- merge_rvine_structures(c(
     list_rvs_level1,
     list(rvs_level2)
   ))
