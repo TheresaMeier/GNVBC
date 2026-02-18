@@ -2,7 +2,8 @@
 % Please edit documentation in R/merge_vines.R
 \name{merge_edges_individual_full}
 \alias{merge_edges_individual_full}
-\title{Merge vine structures for hierarchical copula (individual spatial structures)}
+\title{Merge vine structures for hierarchical copula
+(individual spatial structures)}
 \usage{
 merge_edges_individual_full(rvs_level1, rvs_level2, bridge_var)
 }
@@ -15,19 +16,20 @@ merge_edges_individual_full(rvs_level1, rvs_level2, bridge_var)
 \item{bridge_var}{Integer. Location index used to connect the hierarchies.}
 }
 \value{
-Merged R-vine structure (rvs_level3) combining spatial and inter-variable
-dependence with variables properly ordered.
+Merged R-vine structure (rvs_level3) combining spatial and
+inter-variable dependence with variables properly ordered.
 }
 \description{
-Combines level 1 (spatial dependence within variables) and level
-2 (inter-variable dependence) R-vine structures into a single unified structure
-using an individual spatial structure approach. Unlike the fixed version, each
-variable can have its own level 1 structure. Level 2 structures are replicated
-and merged with their corresponding level 1 structures.
+Combines level 1 (spatial dependence within variables)
+and level 2 (inter-variable dependence) R-vine structures into a
+single unified structure using an individual spatial structure
+approach. Unlike the fixed version, each variable can have its own
+level 1 structure. Level 2 structures are replicated and merged with
+their corresponding level 1 structures.
 }
 \details{
-This function handles variable-specific level 1 structures by replicating
-each corresponding level 2 structure, then transforming both to natural
-ordering before merging. The bridge variable anchors the connection between
-the two levels.
+This function handles variable-specific level 1 structures by
+replicating each corresponding level 2 structure, then transforming
+both to natural ordering before merging. The bridge variable anchors
+the connection between the two levels.
 }

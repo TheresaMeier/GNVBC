@@ -7,71 +7,89 @@
 extract_components(gam_list, data, locs, time)
 }
 \arguments{
-\item{gam_list}{Named list of fitted GAM objects (one per variable); obtained from \code{get_GAMs()}.}
+\item{gam_list}{Named list of fitted GAM objects (one per variable);
+obtained from \code{get_gams()}.}
 
-\item{data}{Original data frame containing the multivariate time series, with columns corresponding to variables and spatial locations.}
+\item{data}{Original data frame containing the multivariate time series,
+with columns corresponding to variables and spatial locations.}
 
 \item{locs}{Data frame of spatial locations with columns: Id, Lat, Lon}
 
-\item{time}{Date vector corresponding to rows of the input data frame, used to align with GAM predictions.}
+\item{time}{Date vector corresponding to rows of the input data frame,
+used to align with GAM predictions.}
 }
 \value{
 A list containing:
 \itemize{
 \item \code{seasonality}: Wide-format data frame of fitted mean values from the GAMs
-\item \code{remainder}: Wide-format data frame of pseudo-observations of PIT values for dependence modeling
-\item \code{remainder_orig}: Wide-format data frame of original PIT values before transformation to pseudo-observations
+\item \code{remainder}: Wide-format data frame of pseudo-observations of PIT values
+for dependence modeling
+\item \code{remainder_orig}: Wide-format data frame of original PIT values before
+transformation to pseudo-observations
 }
 }
 \description{
 Decomposes multivariate time series data into:
 \itemize{
-\item Seasonality component: the fitted mean from the GAMs, capturing temporal and spatial patterns (GAM predictions)
-\item Remainder component: the Probability Integral Transform (PIT) values of the original data relative to the fitted GAMs, representing residuals on the copula scale.
+\item Seasonality component: the fitted mean from the GAMs, capturing temporal
+and spatial patterns (GAM predictions)
+\item Remainder component: the Probability Integral Transform (PIT) values
+of the original data relative to the fitted GAMs, representing residuals
+on the copula scale.
 }
 
-This function transforms the input data into a long format, applies the fitted GAMs to extract the mean and compute PIT values for each variable, and then reshapes the results back into a wide format suitable for dependence modeling.
+This function transforms the input data into a long format, applies the
+fitted GAMs to extract the mean and compute PIT values for each variable,
+and then reshapes the results back into a wide format suitable for
+dependence modeling.
 }
 \examples{
 set.seed(1)
-n_locs = 10
+n_locs <- 10
 # Simulate some data for demonstration
-mp = data.frame(cbind(matrix(rnorm(500), ncol=n_locs)),
-                      matrix(rgamma(500, shape = 2), ncol=n_locs))
-mc = data.frame(cbind(matrix(rnorm(1000), ncol=n_locs)),
-                      matrix(rgamma(1000, shape = 2), ncol=n_locs))
-rc = data.frame(cbind(matrix(rnorm(1000), ncol=n_locs)),
-                      matrix(rgamma(1000, shape = 2), ncol=n_locs))
+mp <- data.frame(
+  cbind(matrix(rnorm(500), ncol = n_locs)),
+  matrix(rgamma(500, shape = 2), ncol = n_locs)
+)
+mc <- data.frame(
+  cbind(matrix(rnorm(1000), ncol = n_locs)),
+  matrix(rgamma(1000, shape = 2), ncol = n_locs)
+)
+rc <- data.frame(
+  cbind(matrix(rnorm(1000), ncol = n_locs)),
+  matrix(rgamma(1000, shape = 2), ncol = n_locs)
+)
 
-colnames(mp) = colnames(mc) = colnames(rc) = paste0(rep(c("tas.", "pr."),
-                                                each = n_locs), c(1:n_locs))
+colnames(mp) <- colnames(mc) <- colnames(rc) <- paste0(rep(c("tas.", "pr."),
+  each = n_locs
+), c(1:n_locs))
 
-time_c = as.Date("2000-01-01") + 0:99
-time_p = as.Date("2020-01-01") + 0:49
+time_c <- as.Date("2000-01-01") + 0:99
+time_p <- as.Date("2020-01-01") + 0:49
 
 # Simulate 10 locations
 locs <- data.frame(
-Id = 1:n_locs,
-Lon = runif(n_locs, -180, 180),
-Lat = runif(n_locs, -90, 90),
-Altitude = runif(n_locs, 0, 3000)
+  Id = 1:n_locs,
+  Lon = runif(n_locs, -180, 180),
+  Lat = runif(n_locs, -90, 90),
+  Altitude = runif(n_locs, 0, 3000)
 )
-var_names = c("tas", "pr")
+var_names <- c("tas", "pr")
 
-families = list("tas" = gaussian(), "pr" = Gamma(link = "log"))
+families <- list("tas" = gaussian(), "pr" = Gamma(link = "log"))
 
-fit = get_GAMs(
-mp = mp,
-mc = mc,
-rc = rc,
-time_p = time_p,
-time_c = time_c,
-locs = locs,
-var_names = var_names,
-families = families,
-cores = 5
+fit <- get_gams(
+  mp = mp,
+  mc = mc,
+  rc = rc,
+  time_p = time_p,
+  time_c = time_c,
+  locs = locs,
+  var_names = var_names,
+  families = families,
+  cores = 5
 )
 
-comp_mc = extract_components(fit$mc, mc, locs, time_c)
+comp_mc <- extract_components(fit$mc, mc, locs, time_c)
 
 }

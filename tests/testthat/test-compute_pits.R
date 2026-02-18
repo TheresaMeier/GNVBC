@@ -92,11 +92,11 @@ test_that("compute_pit returns valid PIT values for all supported families", {
 make_test_data <- function(n_locs = 10, n_time = 50) {
   set.seed(42)
 
-  data = data.frame(
+  data <- data.frame(
     cbind(matrix(rnorm(n_locs * n_time), ncol = n_locs)),
     matrix(rgamma(500, shape = 2), ncol = n_locs)
   )
-  colnames(data) = paste0(rep(c("tas.", "pr."), each = n_locs), c(1:n_locs))
+  colnames(data) <- paste0(rep(c("tas.", "pr."), each = n_locs), c(1:n_locs))
 
   time <- as.Date("2000-01-01") + seq_len(n_time) - 1
 
@@ -111,7 +111,7 @@ make_test_data <- function(n_locs = 10, n_time = 50) {
     pr = Gamma(link = "log")
   )
 
-  gam_list <- get_GAMs(
+  gam_list <- get_gams(
     mp = data,
     mc = data,
     rc = data,

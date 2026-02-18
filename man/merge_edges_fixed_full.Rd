@@ -2,29 +2,35 @@
 % Please edit documentation in R/merge_vines.R
 \name{merge_edges_fixed_full}
 \alias{merge_edges_fixed_full}
-\title{Merge vine structures for hierarchical copula (fixed spatial structure)}
+\title{Merge vine structures for hierarchical copula
+(fixed spatial structure)}
 \usage{
 merge_edges_fixed_full(rvs_level1, rvs_level2, bridge_var)
 }
 \arguments{
-\item{rvs_level1}{R-vine structure object for spatial dependence (to be replicated)}
+\item{rvs_level1}{R-vine structure object for spatial dependence
+(to be replicated)}
 
-\item{rvs_level2}{R-vine structure object for inter-variable dependence (single structure)}
+\item{rvs_level2}{R-vine structure object for inter-variable
+dependence (single structure)}
 
-\item{bridge_var}{Integer. Location index used to connect the two hierarchies.}
+\item{bridge_var}{Integer. Location index used to connect the two
+hierarchies.}
 }
 \value{
-Merged R-vine structure (rvs_level3) combining spatial and inter-variable
-dependence with variables properly ordered.
+Merged R-vine structure (rvs_level3) combining spatial and
+inter-variable dependence with variables properly ordered.
 }
 \description{
-Combines level 1 (spatial dependence within variables) and level 2
-(inter-variable dependence) R-vine structures into a single unified structure
-using a fixed spatial structure approach. The level 2 structure is replicated
-across variables, then merged with the level 1 structure using a bridging variable.
+Combines level 1 (spatial dependence within variables)
+and level 2 (inter-variable dependence) R-vine structures into a
+single unified structure using a fixed spatial structure approach.
+The level 2 structure is replicated across variables, then merged
+with the level 1 structure using a bridging variable.
 }
 \details{
-This function replicates the level 2 structure across all spatial locations,
-then transforms both structures to a common natural ordering before merging.
-The bridge variable anchors the connection between the two levels.
+This function replicates the level 2 structure across all
+spatial locations, then transforms both structures to a common
+natural ordering before merging. The bridge variable anchors the
+connection between the two levels.
 }

@@ -32,11 +32,11 @@
 #' For Tweedie and Beta models, the additional parameters
 #' (power or precision) are extracted from the fitted GAM object.
 #'
-inverse_PITs = function(gam_fit, u_mph_wide, u_mph, components_rc) {
-  vars_unique = names(gam_fit$rc)
+inverse_pits <- function(gam_fit, u_mph_wide, u_mph, components_rc) {
+  vars_unique <- names(gam_fit$rc)
 
   # Initialize corrected data container
-  x_mph_wide = u_mph_wide
+  x_mph_wide <- u_mph_wide
 
   for (var in vars_unique) {
     # Retrieve GAM fits
@@ -95,7 +95,7 @@ inverse_PITs = function(gam_fit, u_mph_wide, u_mph, components_rc) {
       simplify = "data.frame"
     )
 
-    p_var = c(t(q_df))
+    p_var <- c(t(q_df))
 
     # Inverse PIT mapping with mean adjustment
     x_mph_wide[[var]] <- inverse_cdf_from_pit(

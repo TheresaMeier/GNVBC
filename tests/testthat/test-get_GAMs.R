@@ -1,29 +1,29 @@
-test_that("get_GAMs returns correct nested structure", {
+test_that("get_gams returns correct nested structure", {
   set.seed(1)
   # Simulate some data for demonstration
-  mp = data.frame(matrix(rnorm(500), ncol = 10))
-  mc = data.frame(matrix(rnorm(1000), ncol = 10))
-  rc = data.frame(matrix(rnorm(1000), ncol = 10))
-  colnames(mp) = colnames(mc) = colnames(rc) = paste0(
+  mp <- data.frame(matrix(rnorm(500), ncol = 10))
+  mc <- data.frame(matrix(rnorm(1000), ncol = 10))
+  rc <- data.frame(matrix(rnorm(1000), ncol = 10))
+  colnames(mp) <- colnames(mc) <- colnames(rc) <- paste0(
     rep(c("tas.", "pr."), each = 5),
     c(1:5)
   )
 
-  time_c = as.Date("2000-01-01") + 0:99
-  time_p = as.Date("2020-01-01") + 0:49
+  time_c <- as.Date("2000-01-01") + 0:99
+  time_p <- as.Date("2020-01-01") + 0:49
 
   # Simulate 5 locations
-  locs = data.frame(
+  locs <- data.frame(
     Lon = runif(5, -180, 180),
     Lat = runif(5, -90, 90),
     Id = 1:5
   )
 
-  var_names = c("tas", "pr")
+  var_names <- c("tas", "pr")
 
-  families = list("tas" = gaussian(), "pr" = gaussian())
+  families <- list("tas" = gaussian(), "pr" = gaussian())
 
-  res = get_GAMs(
+  res <- get_gams(
     mp = mp,
     mc = mc,
     rc = rc,
@@ -59,7 +59,7 @@ test_that("get_GAMs returns correct nested structure", {
   )
 
   expect_silent(
-    get_GAMs(
+    get_gams(
       mp,
       mc,
       rc,
@@ -73,35 +73,34 @@ test_that("get_GAMs returns correct nested structure", {
   )
 })
 
-
-test_that("get_GAMs returns correct nested structure for additional variables", {
+test_that("get_gams returns correct structure for additional variables", {
   set.seed(1)
-  n_locs = 10
+  n_locs <- 10
   # Simulate some data for demonstration
-  mp = data.frame(
+  mp <- data.frame(
     cbind(matrix(rnorm(500), ncol = n_locs)),
     matrix(rgamma(500, shape = 2), ncol = n_locs)
   )
-  mc = data.frame(
+  mc <- data.frame(
     cbind(matrix(rnorm(1000), ncol = n_locs)),
     matrix(rgamma(1000, shape = 2), ncol = n_locs)
   )
-  rc = data.frame(
+  rc <- data.frame(
     cbind(matrix(rnorm(1000), ncol = n_locs)),
     matrix(rgamma(1000, shape = 2), ncol = n_locs)
   )
 
-  colnames(mp) = colnames(mc) = colnames(rc) = paste0(
+  colnames(mp) <- colnames(mc) <- colnames(rc) <- paste0(
     rep(c("tas.", "pr."), each = n_locs),
     c(1:n_locs)
   )
 
-  time_c = as.Date("2000-01-01") + 0:99
-  time_p = as.Date("2020-01-01") + 0:49
+  time_c <- as.Date("2000-01-01") + 0:99
+  time_p <- as.Date("2020-01-01") + 0:49
 
-  var_names = c("tas", "pr")
+  var_names <- c("tas", "pr")
 
-  families = list("tas" = gaussian(), "pr" = Gamma(link = "log"))
+  families <- list("tas" = gaussian(), "pr" = Gamma(link = "log"))
 
   locs <- data.frame(
     Id = 1:n_locs,
@@ -110,7 +109,7 @@ test_that("get_GAMs returns correct nested structure for additional variables", 
     Altitude = runif(n_locs, 0, 3000)
   )
 
-  res = get_GAMs(
+  res <- get_gams(
     mp,
     mc,
     rc,
@@ -146,7 +145,7 @@ test_that("get_GAMs returns correct nested structure for additional variables", 
   )
 
   expect_silent(
-    get_GAMs(
+    get_gams(
       mp,
       mc,
       rc,

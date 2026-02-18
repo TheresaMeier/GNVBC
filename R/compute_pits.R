@@ -163,7 +163,7 @@ compute_pit <- function(y, fit) {
 #' and then reshapes the results back into a wide format suitable for
 #' dependence modeling.
 #' @param gam_list Named list of fitted GAM objects (one per variable);
-#'   obtained from `get_GAMs()`.
+#'   obtained from `get_gams()`.
 #' @param data Original data frame containing the multivariate time series,
 #'   with columns corresponding to variables and spatial locations.
 #' @param locs Data frame of spatial locations with columns: Id, Lat, Lon
@@ -213,7 +213,7 @@ compute_pit <- function(y, fit) {
 #'
 #' families <- list("tas" = gaussian(), "pr" = Gamma(link = "log"))
 #'
-#' fit <- get_GAMs(
+#' fit <- get_gams(
 #'   mp = mp,
 #'   mc = mc,
 #'   rc = rc,

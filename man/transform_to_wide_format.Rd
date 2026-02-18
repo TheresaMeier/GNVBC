@@ -7,7 +7,8 @@
 transform_to_wide_format(data, locs, vars, time)
 }
 \arguments{
-\item{data}{Data frame with columns named variable.location_id (e.g. "tas.1", "pr.2")}
+\item{data}{Data frame with columns named variable.location_id
+(e.g. "tas.1", "pr.2")}
 
 \item{locs}{Data frame of spatial locations (columns: Id, Lat, Lon)}
 

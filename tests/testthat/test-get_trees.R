@@ -33,7 +33,7 @@ test_that("spatial grid derivation works", {
   expect_equal(mask, expected)
 
   # Subsetting by ids preserves adjacency structure
-  ids = c(1, 5, 6, 10, 15)
+  ids <- c(1, 5, 6, 10, 15)
   full_mask <- get_spatial_mask(5, 3)
   sub_mask <- get_spatial_mask(5, 3, ids)
 
@@ -41,11 +41,11 @@ test_that("spatial grid derivation works", {
   expect_equal(sub_mask, full_mask[ids, ids])
 })
 
-test_that("spanning_tree_to_rvine_structure returns valid R-vine structure", {
+test_that("rvine_from_spanning_tree returns valid R-vine structure", {
   set.seed(1)
   g <- igraph::make_tree(5, children = 2, mode = "undirected")
 
-  rvs <- spanning_tree_to_rvine_structure(g)
+  rvs <- rvine_from_spanning_tree(g)
 
   expect_s3_class(rvs, "rvine_structure")
   expect_equal(rvs$d, igraph::vcount(g))
@@ -54,14 +54,14 @@ test_that("spanning_tree_to_rvine_structure returns valid R-vine structure", {
   g <- igraph::make_graph(c(1, 2, 2, 3, 3, 4, 5, 6), directed = FALSE)
 
   expect_error(
-    spanning_tree_to_rvine_structure(g),
+    rvine_from_spanning_tree(g),
     "Input spanning_tree must be a connected graph."
   )
 
   # R-vine order is a permutation of graph nodes
   g <- igraph::make_tree(6, children = 2, mode = "undirected")
 
-  rvs <- spanning_tree_to_rvine_structure(g)
+  rvs <- rvine_from_spanning_tree(g)
 
   expect_equal(
     sort(rvs$order),
@@ -69,7 +69,7 @@ test_that("spanning_tree_to_rvine_structure returns valid R-vine structure", {
   )
 
   # First-tree structure has correct size and nodes
-  rvs <- spanning_tree_to_rvine_structure(g)
+  rvs <- rvine_from_spanning_tree(g)
 
   first_tree <- rvs$struct_array[[1]]
 
@@ -82,7 +82,7 @@ test_that("spanning_tree_to_rvine_structure returns valid R-vine structure", {
     directed = FALSE
   )
 
-  rvs <- spanning_tree_to_rvine_structure(g)
+  rvs <- rvine_from_spanning_tree(g)
 
   expect_equal(sort(rvs$order), 1:4)
   expect_equal(length(rvs$struct_array[[1]]), 3)

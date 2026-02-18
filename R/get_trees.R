@@ -1,7 +1,7 @@
 #' @title Create a spatial adjacency mask for a regular grid
-#' @description Constructs a sparse adjacency matrix representing spatial neighborhood
-#' relationships on a 2D grid. Each grid cell is connected to its immediate
-#' neighbors: horizontal, vertical, and diagonal (8-neighborhood).
+#' @description Constructs a sparse adjacency matrix representing spatial
+#'   neighborhood relationships on a 2D grid. Each grid cell is connected to
+#' its immediate neighbors: horizontal, vertical, and diagonal (8-neighborhood).
 #'
 #' The resulting matrix can be used as a spatial constraint mask, e.g.
 #' to restrict allowed edges in a spatial R-vine or graphical model.
@@ -12,10 +12,11 @@
 #'
 #' @returns Sparse adjacency matrix of dimension (`n_cells x n_cells`),
 #' where entry `(i, j) = 1` if cells `i` and `j` are neighbors
-#' @details
-#' The grid cells are numbered column-wise, i.e., it starts with the grid cell
-#' in the bottom-left corner (row 1, column 1) as cell 1, then moves up the first
-#' column, then continues at the bottom cell of the second column, and so on.
+#' @details The grid cells are numbered column-wise, starting with the
+#'   grid cell in the bottom-left corner (row 1, column 1) as cell 1, then
+#'   moves up the first column, then continues at the bottom cell of the
+#'   second column, and
+#' so on.
 #'
 #' @export
 #'
@@ -80,7 +81,7 @@ get_spatial_mask <- function(rows, cols, ids = NULL) {
     adj_matrix <- adj_matrix[ids, ids]
   }
 
-  return(adj_matrix)
+  adj_matrix
 }
 
 
@@ -101,9 +102,10 @@ get_spatial_mask <- function(rows, cols, ids = NULL) {
 #'  - the first-tree edge structure
 #' @export
 #'
-#' @details Assumes the spanning tree is connected and uses node 1 as the BFS root
+#' @details Assumes the spanning tree is connected and uses node 1 as
+#'   the BFS root
 #'
-spanning_tree_to_rvine_structure <- function(spanning_tree) {
+rvine_from_spanning_tree <- function(spanning_tree) {
   # Check if graph is connected, otherwise error
   if (!igraph::is_connected(spanning_tree)) {
     stop("Input spanning_tree must be a connected graph.")
@@ -147,10 +149,8 @@ spanning_tree_to_rvine_structure <- function(spanning_tree) {
   # Construct R-vine structure:
   # - Reverse order to match vinecopulib conventions
   # - First tree is given by row1
-  rvine_struct <- rvinecopulib::rvine_structure(
+  rvinecopulib::rvine_structure(
     order = rev(as.vector(order)),
     struct_array = list(rev(row1))
   )
-
-  return(rvine_struct)
 }

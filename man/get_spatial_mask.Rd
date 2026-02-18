@@ -19,17 +19,19 @@ Sparse adjacency matrix of dimension (\verb{n_cells x n_cells}),
 where entry \verb{(i, j) = 1} if cells \code{i} and \code{j} are neighbors
 }
 \description{
-Constructs a sparse adjacency matrix representing spatial neighborhood
-relationships on a 2D grid. Each grid cell is connected to its immediate
-neighbors: horizontal, vertical, and diagonal (8-neighborhood).
+Constructs a sparse adjacency matrix representing spatial
+neighborhood relationships on a 2D grid. Each grid cell is connected to
+its immediate neighbors: horizontal, vertical, and diagonal (8-neighborhood).
 
 The resulting matrix can be used as a spatial constraint mask, e.g.
 to restrict allowed edges in a spatial R-vine or graphical model.
 }
 \details{
-The grid cells are numbered column-wise, i.e., it starts with the grid cell
-in the bottom-left corner (row 1, column 1) as cell 1, then moves up the first
-column, then continues at the bottom cell of the second column, and so on.
+The grid cells are numbered column-wise, starting with the
+grid cell in the bottom-left corner (row 1, column 1) as cell 1, then
+moves up the first column, then continues at the bottom cell of the
+second column, and
+so on.
 }
 \examples{
 # 5x5 grid with full neighborhood structure

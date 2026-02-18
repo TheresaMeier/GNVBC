@@ -1,30 +1,41 @@
 #' @title Fit tensor-product GAMs for multiple climate datasets
-#' @description Fits generalized additive models (GAMs) using tensor-product smooths to
-#' capture joint temporal and spatial variation in climate variables.
+#' @description Fits generalized additive models (GAMs) using
+#' tensor-product smooths to capture joint temporal and spatial variation
+#' in climate variables.
 #'
 #' Temporal variation is modeled using a cyclic cubic spline on day-of-year,
 #' while spatial variation is modeled using thin plate splines over latitude
 #' and longitude.
 #'
 #' Models are fitted separately for multiple datasets (e.g., modeled
-#' calibration mc, modeled projection mp, reference calibration rc) and for multiple
-#' climate variables, using parallel processing if requested.
+#' calibration mc, modeled projection mp, reference calibration rc) and
+#' for multiple climate variables, using parallel processing if requested.
 #'
-#' @param mp Data frame with modeled projection data with columns named "variable.location_id"
-#' @param mc Data frame with modeled calibration data with columns named "variable.location_id"
-#' @param rc Data frame with reference calibration data with columns named "variable.location_id"
+#' @param mp Data frame with modeled projection data with columns named
+#'   "variable.location_id"
+#' @param mc Data frame with modeled calibration data with columns named
+#'   "variable.location_id"
+#' @param rc Data frame with reference calibration data with columns named
+#'   "variable.location_id"
 #' @param locs Data frame of spatial locations with columns: Id, Lat, Lon
-#' @param time_c Date vector corresponding to rows of calibration datasets (mc, rc)
+#' @param time_c Date vector corresponding to rows of calibration datasets
+#'   (mc, rc)
 #' @param time_p Date vector corresponding to rows of projection dataset (mp)
-#' @param var_names Character vector of climate variable names (e.g., c("tas", "pr"))
-#' @param families Named list of family objects for each variable (e.g., list(tas = gaussian(), pr = tw(link = "log")))
-#' @param cores Number of parallel workers used for model fitting; if NULL or 1, runs sequentially
-#' @param extra_smooths Optional character vector of additional predictor variable names to include as smooth terms (e.g., c("elev") or c("s(elev, k=5)"));
-#' if provided, these will be added as separate smooth terms in the GAM formula.
+#' @param var_names Character vector of climate variable names
+#'   (e.g., c("tas", "pr"))
+#' @param families Named list of family objects for each variable
+#'   (e.g., list(tas = gaussian(), pr = tw(link = "log")))
+#' @param cores Number of parallel workers used for model fitting;
+#'   if NULL or 1, runs sequentially
+#' @param extra_smooths Optional character vector of additional predictor
+#'   variable names to include as smooth terms (e.g., c("elev") or
+#'   c("s(elev, k=5)")); if provided, these will be added as separate
+#'   smooth terms in the GAM formula.
 #'
 #' @importFrom mgcv bam
 #'
-#' @returns Nested list of fitted GAM objects with structure:`[[dataset]][[variable]]`
+#' @returns Nested list of fitted GAM objects with
+#'   structure:`[[dataset]][[variable]]`
 #' @export
 #'
 #' @examples
@@ -33,20 +44,24 @@
 #' mp = data.frame(matrix(rnorm(500), ncol=10))
 #' mc = data.frame(matrix(rnorm(1000), ncol=10))
 #' rc = data.frame(matrix(rnorm(1000), ncol=10))
-#' colnames(mp) = colnames(mc) = colnames(rc) = paste0(rep(c("tas.", "pr."), each = 5), c(1:5))
+#' colnames(mp) = colnames(mc) = colnames(rc) = paste0(
+#'   rep(c("tas.", "pr."), each = 5), c(1:5)
+#' )
 #'
 #' time_c = as.Date("2000-01-01") + 0:99
 #' time_p = as.Date("2020-01-01") + 0:49
 #'
 #' # Simulate 5 locations
-#' locs = data.frame(Lon = runif(5, -180, 180), Lat = runif(5, -90, 90), Id = 1:5,
-#'                   Altitude = runif(5, 0, 3000))
+#' locs = data.frame(
+#'   Lon = runif(5, -180, 180), Lat = runif(5, -90, 90), Id = 1:5,
+#'   Altitude = runif(5, 0, 3000)
+#' )
 #'
 #' var_names = c("tas", "pr")
 #'
 #' families = list("tas" = gaussian(), "pr" = gaussian())
 #'
-#' test = get_GAMs(
+#' test = get_gams(
 #' mp = mp,
 #' mc = mc,
 #' rc = rc,
@@ -59,7 +74,7 @@
 #' )
 #'
 #' # With extra smooths
-#' test = get_GAMs(
+#' test = get_gams(
 #' mp = mp,
 #' mc = mc,
 #' rc = rc,
@@ -72,7 +87,7 @@
 #' extra_smooths = c("s(Altitude, k=3)")
 #' )
 #'
-get_GAMs <- function(
+get_gams <- function(
   mp,
   mc,
   rc,
@@ -150,12 +165,17 @@ get_GAMs <- function(
     )
 }
 
-#' Build GAM formula with tensor-product smooths for time and space, plus optional extra smooths.
+#' Build GAM formula with tensor-product smooths for time and space,
+#' plus optional extra smooths.
 #'
 #' @param response Name of the response variable (e.g., "tas", "pr")
-#' @param extra_smooths Optional character vector of additional predictor variable names to include as smooth terms (e.g., c("elev", "dist_to_coast"))
+#' @param extra_smooths Optional character vector of additional predictor
+#'   variable names to include as smooth terms
+#'   (e.g., c("elev", "dist_to_coast"))
 #'
-#' @returns A formula object for use in mgcv::bam(), with a base tensor-product smooth for time and space, plus any specified extra smooths.
+#' @returns A formula object for use in mgcv::bam(), with a base
+#'   tensor-product smooth for time and space, plus any specified extra
+#'   smooths.
 #' @export
 build_gam_formula <- function(response, extra_smooths = NULL) {
   # Base smooth: time × space

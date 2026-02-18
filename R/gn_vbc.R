@@ -135,7 +135,7 @@ gn_vbc <- function(
   # Step 1: GAM-based decomposition into seasonal and remainder components
   # ---------------------------------------------------------------------------
 
-  gam_fit <- get_GAMs(
+  gam_fit <- get_gams(
     mp,
     mc,
     rc,
@@ -221,7 +221,7 @@ gn_vbc <- function(
     time_p
   )
 
-  x_mph_wide <- inverse_PITs(
+  x_mph_wide <- inverse_pits(
     gam_fit,
     u_mph_wide,
     u_mph,
