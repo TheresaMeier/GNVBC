@@ -1,15 +1,17 @@
 #' @title Reorder dataset columns by variable or location grouping
 #'
-#' @description Reorganizes columns of a dataset that follows a "variable.location_id"
-#' naming convention (e.g. "tas.1", "tas.2", "pr.1" etc.). The function allows
-#' switching between variable-major and location-major layouts.
+#' @description Reorganizes columns of a dataset that follows a
+#' "variable.location_id" naming convention (e.g. "tas.1", "tas.2",
+#' "pr.1" etc.). The function allows switching between variable-major and
+#' location-major layouts.
 #'
 #' Two ordering strategies are supported:
 #'   - variable-major : all locations for each variable are grouped together
 #'   - location-major : all variables for each location are grouped together
 #
 #'
-#' @param data Data frame with columns named as "variable.location_id", e.g. "tas.1" or "tas.loc1"
+#' @param data Data frame with columns named as "variable.location_id",
+#'   e.g. "tas.1" or "tas.loc1"
 #' @param direction Reordering strategy: "variable-major" or "location-major"
 #' @param order Optional: Integer vector specifying a custom variable order
 #'
@@ -58,12 +60,13 @@ reorder_dataset <- function(
   # ---------------------------------------------------------------------------
   # Step 4: Reorder and return dataset
   # ---------------------------------------------------------------------------
-  return(data.frame(data)[, new_order])
+  data.frame(data)[, new_order]
 }
 
 #' Transform climate data into wide format for GAM fitting.
 #'
-#' @param data Data frame with columns named variable.location_id (e.g. "tas.1", "pr.2")
+#' @param data Data frame with columns named variable.location_id
+#'   (e.g. "tas.1", "pr.2")
 #' @param locs Data frame of spatial locations (columns: Id, Lat, Lon)
 #' @param vars Character vector of variable names to extract
 #' @param time Date vector corresponding to rows of data
@@ -75,7 +78,6 @@ reorder_dataset <- function(
 #' - Lat  : Latitude
 #' - Lon  : Longitude
 #' - One column per climate variable
-#' @importFrom magrittr %>%
 #' @importFrom rlang .data
 #' @export
 #'
@@ -96,20 +98,20 @@ transform_to_wide_format <- function(data, locs, vars, time) {
   # Step 2: Reshape data and attach temporal and spatial covariates
   # ---------------------------------------------------------------------------
 
-  locs <- locs %>%
+  locs <- locs |>
     dplyr::mutate(Id = as.numeric(gsub("\\D+", "", locs$Id)))
 
-  data %>%
-    dplyr::select(dplyr::all_of(selected_cols)) %>%
-    dplyr::mutate(time = as.Date(time)) %>%
+  data |>
+    dplyr::select(dplyr::all_of(selected_cols)) |>
+    dplyr::mutate(time = as.Date(time)) |>
     tidyr::pivot_longer(
       cols = -time,
       names_to = c(".value", "Id"),
       names_sep = "\\."
-    ) %>%
+    ) |>
     dplyr::mutate(
       Id = as.numeric(gsub("\\D+", "", .data$Id)),
       t = lubridate::yday(time) # Day-of-year for cyclic temporal smoothing
-    ) %>%
+    ) |>
     dplyr::left_join(locs, by = "Id")
 }

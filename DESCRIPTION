@@ -1,30 +1,31 @@
 Package: cuveeMBC
-Title: Multivariate bias correction for climate projections using GAMs and CUVEE
+Title: Multivariate bias correction for climate projections using GAMs and
+    CUVEE
 Version: 0.0.0.9000
 Authors@R: 
-    person("Theresa", "Meier", ,"theresa.meier.1@unil.ch", role = c("aut", "cre"))
+    person("Theresa", "Meier", , "theresa.meier.1@unil.ch", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
-Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
-Suggests: 
-    testthat (>= 3.0.0)
-Config/testthat/edition: 3
+Depends:
+    mgcv
 Imports: 
     dplyr,
     furrr,
     future,
     igraph,
     lubridate,
-    magrittr,
     Matrix,
     purrr,
     rlang,
     rvinecopulib,
+    statmod,
     stats,
     tidyr,
     tweedie,
     wdm
-Depends:
-    mgcv
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3

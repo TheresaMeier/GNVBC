@@ -1,4 +1,5 @@
-^cuveeMBC\.Rproj$
-^\.Rproj\.user$
 ^LICENSE\.md$
+^\.Rproj\.user$
+^\.pre-commit-config\.yaml$
+^cuveeMBC\.Rproj$
 air.toml
