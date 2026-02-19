@@ -16,15 +16,19 @@ inverse_cdf_from_pit(p, mu, phi, family_name, power = NULL, size = 1)
 \item{family_name}{Character string indicating the distribution family
 (e.g., "gaussian", "Gamma", "Tweedie", "Beta", "Poisson", "Binomial")}
 
-\item{power}{Numeric value of the power parameter for the Tweedie distribution (required if family is Tweedie)}
+\item{power}{Numeric value of the power parameter for the Tweedie
+distribution (required if family is Tweedie)}
 
-\item{size}{Numeric value of the size parameter for the Binomial distribution (required if family is Binomial)}
+\item{size}{Numeric value of the size parameter for the Binomial
+distribution (required if family is Binomial)}
 }
 \value{
-Numeric vector of values on the original data scale corresponding to the input PIT values
+Numeric vector of values on the original data scale
+corresponding to the input PIT values
 }
 \description{
-Maps PIT values back to the original data scale using the inverse
+Maps PIT values back to the original data scale
+using the inverse
 cumulative distribution function (quantile function) of the specified
 distribution family.
 }

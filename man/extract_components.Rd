@@ -7,30 +7,41 @@
 extract_components(gam_list, data, locs, time)
 }
 \arguments{
-\item{gam_list}{Named list of fitted GAM objects (one per variable); obtained from \code{get_GAMs()}.}
+\item{gam_list}{Named list of fitted GAM objects
+(one per variable); obtained from \code{get_gams()}.}
 
-\item{data}{Original data frame containing the multivariate time series, with columns corresponding to variables and spatial locations.}
+\item{data}{Original data frame containing the multivariate time series,
+with columns corresponding to variables and spatial locations.}
 
 \item{locs}{Data frame of spatial locations with columns: Id, Lat, Lon}
 
-\item{time}{Date vector corresponding to rows of the input data frame, used to align with GAM predictions.}
+\item{time}{Date vector corresponding to rows of the input data frame,
+used to align with GAM predictions.}
 }
 \value{
 A list containing:
 \itemize{
 \item \code{seasonality}: Wide-format data frame of fitted mean values from the GAMs
-\item \code{remainder}: Wide-format data frame of pseudo-observations of PIT values for dependence modeling
-\item \code{remainder_orig}: Wide-format data frame of original PIT values before transformation to pseudo-observations
+\item \code{remainder}: Wide-format data frame of pseudo-observations
+of PIT values for dependence modeling
+\item \code{remainder_orig}: Wide-format data frame of original PIT values
+before transformation to pseudo-observations
 }
 }
 \description{
 Decomposes multivariate time series data into:
 \itemize{
-\item Seasonality component: the fitted mean from the GAMs, capturing temporal and spatial patterns (GAM predictions)
-\item Remainder component: the Probability Integral Transform (PIT) values of the original data relative to the fitted GAMs, representing residuals on the copula scale.
+\item Seasonality component: the fitted mean from the GAMs,
+capturing temporal and spatial patterns (GAM predictions)
+\item Remainder component: the Probability Integral Transform (PIT)
+values of the original data relative to the fitted GAMs,
+representing residuals on the copula scale.
 }
 
-This function transforms the input data into a long format, applies the fitted GAMs to extract the mean and compute PIT values for each variable, and then reshapes the results back into a wide format suitable for dependence modeling.
+This function transforms the input data into a long format,
+applies the fitted GAMs to extract the mean and compute PIT values
+for each variable, and then reshapes the results back into a wide
+format suitable for dependence modeling.
 }
 \examples{
 set.seed(1)
@@ -60,7 +71,7 @@ var_names = c("tas", "pr")
 
 families = list("tas" = gaussian(), "pr" = Gamma(link = "log"))
 
-fit = get_GAMs(
+fit = get_gams(
 mp = mp,
 mc = mc,
 rc = rc,

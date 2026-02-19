@@ -37,20 +37,23 @@ gn_vbc(
 
 \item{time_p}{Time vector for projection period}
 
-\item{locs}{Data frame with spatial coordinates (Lon, Lat) and Id per location,
+\item{locs}{Data frame with spatial coordinates (Lon, Lat)
+and Id per location,
 and potential other spatial covariates (e.g., altitude)}
 
 \item{nrows}{Number of grid rows}
 
 \item{ncols}{Number of grid columns}
 
-\item{families}{Distribution families for GAM fitting as list: e.g., \code{list(tas = gaussian(), pr = tw(link = "log"))}}
+\item{families}{Distribution families for GAM fitting as list:
+e.g., \code{list(tas = gaussian(), pr = tw(link = "log"))}}
 
 \item{fixed}{Logical; whether to assume fixed local vine structure}
 
 \item{mask}{Logical; whether to apply spatial adjacency mask (see Details)}
 
-\item{bridge_var}{Optional variable used to bridge vine structures (see Details)}
+\item{bridge_var}{Optional variable used to bridge vine structures
+(see Details)}
 
 \item{trunc_lvl}{Optional truncation level for vine copulas}
 
@@ -70,7 +73,8 @@ A list containing:
 }
 \description{
 Performs multivariate bias correction of climate model simulations using
-Probability Integral Transforms (PIT) derived from Generalized additive models
+Probability Integral Transforms (PIT) derived from
+Generalized additive models
 (GAMs) and nested vine copulas (NVC). The method is designed
 for potentially zero-inflated climate variables and preserves inter-variable,
 spatial and temporal dependence structures.
@@ -96,7 +100,8 @@ locality in the maximum spanning tree selection and reduces the
 number of admissible pair-copulas. If \code{FALSE}, the vine structure
 is selected without spatial constraints.
 \item \code{bridge_var}: The bridging location, i.e., an integer between 1 and the
-number of locations, acts as a shared conditioning node that ensures the resulting
+number of locations, acts as a shared conditioning node that ensures
+the resulting
 global vine structure satisfies the proximity condition and
 remains a valid R-vine. If \code{NULL}, the bridging location is chosen randomly.
 }

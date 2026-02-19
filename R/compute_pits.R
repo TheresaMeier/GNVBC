@@ -1,5 +1,6 @@
 #' @title Compute Probability Integral Transform (PIT) values from a fitted GAM
-#' @description Transforms observed responses into PIT values using the conditional
+#' @description Transforms observed responses into PIT values using
+#' the conditional
 #' distribution implied by a fitted GAM. The distributional form is
 #' selected based on the variable name prefix.
 #'
@@ -11,8 +12,12 @@
 #' @returns Numeric vector of PIT values in `[0,1]`
 #' @export
 #'
-#' @details The function supports the following families: Gaussian, Gamma, Tweedie, Beta, Poisson, Binomial.
-#' The family is inferred from the fitted model's family component. For discrete families (Poisson, Binomial), randomization is applied to ensure PIT values are continuous on `[0,1]`. For continuous families, the appropriate CDF is used directly.
+#' @details The function supports the following families: Gaussian, Gamma,
+#' Tweedie, Beta, Poisson, Binomial.
+#' The family is inferred from the fitted model's family component.
+#' For discrete families (Poisson, Binomial), randomization is applied to
+#' ensure PIT values are continuous on `[0,1]`.
+#' For continuous families, the appropriate CDF is used directly.
 #'
 #' @examples
 #'
@@ -144,25 +149,36 @@ compute_pit <- function(y, fit) {
     )
   )
 
-  return(u)
+  u
 }
 
 
 #' @title Extract seasonality and remainder components from fitted GAMs
 #' @description Decomposes multivariate time series data into:
-#' - Seasonality component: the fitted mean from the GAMs, capturing temporal and spatial patterns (GAM predictions)
-#' - Remainder component: the Probability Integral Transform (PIT) values of the original data relative to the fitted GAMs, representing residuals on the copula scale.
+#' - Seasonality component: the fitted mean from the GAMs,
+#'   capturing temporal and spatial patterns (GAM predictions)
+#' - Remainder component: the Probability Integral Transform (PIT)
+#'   values of the original data relative to the fitted GAMs,
+#'   representing residuals on the copula scale.
 #'
-#' This function transforms the input data into a long format, applies the fitted GAMs to extract the mean and compute PIT values for each variable, and then reshapes the results back into a wide format suitable for dependence modeling.
-#' @param gam_list Named list of fitted GAM objects (one per variable); obtained from `get_GAMs()`.
-#' @param data Original data frame containing the multivariate time series, with columns corresponding to variables and spatial locations.
+#' This function transforms the input data into a long format,
+#' applies the fitted GAMs to extract the mean and compute PIT values
+#' for each variable, and then reshapes the results back into a wide
+#' format suitable for dependence modeling.
+#' @param gam_list Named list of fitted GAM objects
+#' (one per variable); obtained from `get_gams()`.
+#' @param data Original data frame containing the multivariate time series,
+#' with columns corresponding to variables and spatial locations.
 #' @param locs Data frame of spatial locations with columns: Id, Lat, Lon
-#' @param time Date vector corresponding to rows of the input data frame, used to align with GAM predictions.
+#' @param time Date vector corresponding to rows of the input data frame,
+#' used to align with GAM predictions.
 #'
 #' @returns A list containing:
 #' - `seasonality`: Wide-format data frame of fitted mean values from the GAMs
-#' - `remainder`: Wide-format data frame of pseudo-observations of PIT values for dependence modeling
-#' - `remainder_orig`: Wide-format data frame of original PIT values before transformation to pseudo-observations
+#' - `remainder`: Wide-format data frame of pseudo-observations
+#'   of PIT values for dependence modeling
+#' - `remainder_orig`: Wide-format data frame of original PIT values
+#'   before transformation to pseudo-observations
 #' @export
 #'
 #' @examples
@@ -193,7 +209,7 @@ compute_pit <- function(y, fit) {
 #'
 #' families = list("tas" = gaussian(), "pr" = Gamma(link = "log"))
 #'
-#' fit = get_GAMs(
+#' fit = get_gams(
 #' mp = mp,
 #' mc = mc,
 #' rc = rc,
@@ -214,10 +230,10 @@ extract_components <- function(gam_list, data, locs, time) {
   vars <- names(gam_list)
 
   # Convert data into long format with explicit Id and time columns
-  data_long = transform_to_wide_format(data, locs, vars, time)
+  data_long <- transform_to_wide_format(data, locs, vars, time)
 
   # Unique spatial/location identifiers
-  id_locs = unique(data_long$Id)
+  id_locs <- unique(data_long$Id)
 
   # Number of observations in long format
   n <- nrow(data_long)
@@ -225,7 +241,7 @@ extract_components <- function(gam_list, data, locs, time) {
   # Initialize data frames for components
   seasonality_df <- data.frame(matrix(NA, nrow = n, ncol = length(vars)))
   colnames(seasonality_df) <- vars
-  remainder_orig_df = seasonality_df
+  remainder_orig_df <- seasonality_df
 
   # Loop over variables and extract components
   for (var in vars) {
@@ -237,12 +253,12 @@ extract_components <- function(gam_list, data, locs, time) {
     seasonality_df[[var]] <- mu_hat
 
     # Compute PIT values (remainder on copula scale)
-    pits = compute_pit(data_long[[var]], fit)
+    pits <- compute_pit(data_long[[var]], fit)
     remainder_orig_df[[var]] <- pits
   }
 
   # Convert remainder PITs to wide format (variable.location)
-  remainder_orig_wide = remainder_orig_df |>
+  remainder_orig_wide <- remainder_orig_df |>
     dplyr::mutate(
       Id = data_long$Id,
       time = data_long$time
@@ -256,7 +272,7 @@ extract_components <- function(gam_list, data, locs, time) {
     dplyr::select(-"time")
 
   # Convert seasonality component to wide format
-  seasonality_wide = seasonality_df |>
+  seasonality_wide <- seasonality_df |>
     dplyr::mutate(
       Id = data_long$Id,
       time = data_long$time
@@ -269,15 +285,16 @@ extract_components <- function(gam_list, data, locs, time) {
     ) |>
     dplyr::select(-"time")
 
-  return(list(
+  list(
     seasonality = seasonality_wide,
     remainder = rvinecopulib::pseudo_obs(remainder_orig_wide),
     remainder_orig = remainder_orig_wide
-  ))
+  )
 }
 
 #' @title Inverse CDF from PIT values for various distributions
-#' @description Maps PIT values back to the original data scale using the inverse
+#' @description Maps PIT values back to the original data scale
+#' using the inverse
 #' cumulative distribution function (quantile function) of the specified
 #' distribution family.
 #'
@@ -286,10 +303,13 @@ extract_components <- function(gam_list, data, locs, time) {
 #' @param phi Numeric vector of dispersion parameters from the fitted GAM
 #' @param family_name Character string indicating the distribution family
 #' (e.g., "gaussian", "Gamma", "Tweedie", "Beta", "Poisson", "Binomial")
-#' @param power Numeric value of the power parameter for the Tweedie distribution (required if family is Tweedie)
-#' @param size Numeric value of the size parameter for the Binomial distribution (required if family is Binomial)
+#' @param power Numeric value of the power parameter for the Tweedie
+#' distribution (required if family is Tweedie)
+#' @param size Numeric value of the size parameter for the Binomial
+#' distribution (required if family is Binomial)
 #'
-#' @returns Numeric vector of values on the original data scale corresponding to the input PIT values
+#' @returns Numeric vector of values on the original data scale
+#' corresponding to the input PIT values
 #' @export
 #'
 #' @examples
@@ -335,23 +355,23 @@ inverse_cdf_from_pit <- function(
 
   # --- Gaussian distribution ---
   if (grepl("^gaussian", family_name, ignore.case = TRUE)) {
-    return(stats::qnorm(p, mean = mu, sd = sqrt(phi)))
+    stats::qnorm(p, mean = mu, sd = sqrt(phi))
 
     # --- Gamma distribution ---
   } else if (grepl("^Gamma", family_name, ignore.case = TRUE)) {
     shape <- 1 / phi
     scale <- phi * mu
-    return(stats::qgamma(p, shape = shape, scale = scale))
+    stats::qgamma(p, shape = shape, scale = scale)
 
     # --- Inverse Gaussian distribution ---
   } else if (grepl("^inverse.gaussian", family_name, ignore.case = TRUE)) {
-    return(statmod::qinvgauss(p, mean = mu, shape = 1 / phi))
+    statmod::qinvgauss(p, mean = mu, shape = 1 / phi)
 
     # --- Beta distribution ---
   } else if (grepl("^Beta", family_name, ignore.case = TRUE)) {
     shape1 <- mu * phi
     shape2 <- (1 - mu) * phi
-    return(stats::qbeta(p, shape1 = shape1, shape2 = shape2))
+    stats::qbeta(p, shape1 = shape1, shape2 = shape2)
 
     # --- Tweedie distribution ---
   } else if (grepl("^Tweedie", family_name, ignore.case = TRUE)) {
@@ -359,15 +379,15 @@ inverse_cdf_from_pit <- function(
       stop("Tweedie inverse CDF requires 'power'")
     }
 
-    return(tweedie::qtweedie(p, mu = mu, phi = phi, power = power))
+    tweedie::qtweedie(p, mu = mu, phi = phi, power = power)
 
     # --- Poisson distribution (discrete) ---
   } else if (grepl("^poisson", family_name, ignore.case = TRUE)) {
-    return(stats::qpois(p, lambda = mu))
+    stats::qpois(p, lambda = mu)
 
     # --- Binomial distribution (discrete) ---
   } else if (grepl("^binomial", family_name, ignore.case = TRUE)) {
-    return(stats::qbinom(p, size = size, prob = mu))
+    stats::qbinom(p, size = size, prob = mu)
 
     # --- Unsupported distribution ---
   } else {

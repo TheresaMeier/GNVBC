@@ -15,7 +15,8 @@ compute_pit(y, fit)
 Numeric vector of PIT values in \verb{[0,1]}
 }
 \description{
-Transforms observed responses into PIT values using the conditional
+Transforms observed responses into PIT values using
+the conditional
 distribution implied by a fitted GAM. The distributional form is
 selected based on the variable name prefix.
 
@@ -23,8 +24,12 @@ This function is typically used to extract model residuals on the
 copula scale (uniform on \verb{[0,1]}) for dependence modeling.
 }
 \details{
-The function supports the following families: Gaussian, Gamma, Tweedie, Beta, Poisson, Binomial.
-The family is inferred from the fitted model's family component. For discrete families (Poisson, Binomial), randomization is applied to ensure PIT values are continuous on \verb{[0,1]}. For continuous families, the appropriate CDF is used directly.
+The function supports the following families: Gaussian, Gamma,
+Tweedie, Beta, Poisson, Binomial.
+The family is inferred from the fitted model's family component.
+For discrete families (Poisson, Binomial), randomization is applied to
+ensure PIT values are continuous on \verb{[0,1]}.
+For continuous families, the appropriate CDF is used directly.
 }
 \examples{
 
