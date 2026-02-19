@@ -61,15 +61,19 @@ data("bc_data")
 
 names_bc = names(bc_data)
 
-# Cut the time frames for faster computation
-bc_data[1:4] = lapply(names(bc_data)[-5], function(x) bc_data[[x]] %>%
-                  filter(between(time, as.Date("2000-01-01"), as.Date("2015-12-31")))
-)
+vars <- c("tas", "hurs", "sfcWind", "ps")
+
+bc_data[1:4] <- lapply(bc_data[1:4], function(df) {
+  df %>%
+    filter(between(time, as.Date("2000-01-01"), as.Date("2015-12-31")))
+})
+
 names(bc_data) = names_bc
 ```
 
-To give an idea about the distribution of the data, we show differences
-in mean temperature between reference and model projections. Note that
+In this example, we cut the timeframes and keep three variables only. To
+give an idea about the distribution of the data, we show differences in
+mean temperature between reference and model projections. Note that
 since the time periods are chosen differently in the main paper and
 another reference is used (here ERA5-land, data provided by MeteoSwiss
 in the paper), the figure shows slightly different values.
@@ -86,8 +90,6 @@ serves as an indicator for preservation of spatial dependence.
 
 ``` r
 wd_pre <- list()
-
-vars <- c("tas", "hurs", "sfcWind", "ps")
 
 # Loop over variables and calculate spatial Wasserstein distances
 for (var in vars) {
@@ -122,20 +124,15 @@ We calculate Wasserstein distances again to assess the improvement in
 distributional similarity after bias correction.
 
 ``` r
-wd_post <- list()
-# Loop over variables and calculate spatial Wasserstein distances
-for (var in vars) {
-  wd <- VBC::calc_wasserstein(
-    bc_data$rp %>% select(starts_with(paste0(var, "."))),
-    mp_corrected$corrected_mp %>% select(starts_with(paste0(var, ".")))
-  )
-  
-  wd_post[[var]] <- wd
-}
+# Calculate improvement in Wasserstein distance
+wd_improvement <- sapply(vars, function(var) {
+  pre <- wd_pre[[var]]
+  post <- wd_post[[var]]
+  improvement <- (pre - post)/pre * 100
+  return(improvement)
+})
 
-wd_df <- do.call(cbind, wd_post) %>% as.data.frame()
-colnames(wd_df) <- vars
-rownames(wd_df) <- c("WD 1", "WD 2")  
+knitr::kable(wd_improvement, digits = 1, caption = "Improvement in Wasserstein distances (%)")
 ```
 
 |               |  tas | hurs | sfcWind |   ps |
@@ -146,55 +143,8 @@ rownames(wd_df) <- c("WD 1", "WD 2")
 Improvement in Wasserstein distances (%)
 
 We can visualize the resulting first tree of the estimated copulas for
-both `mp` and `rc`.
-
-``` r
-library(rvinecopulib)
-
-# Switzerland cantons
-swiss_cantons <- rnaturalearth::ne_states(country = "Switzerland", returnclass = "sf")
-vaud <- swiss_cantons[swiss_cantons$name == "Vaud", ]
-
-points_sf <- sf::st_as_sf(
-  bc_data$locations,
-  coords = c("Lon", "Lat"),
-  crs = 4326
-)
-
-ggplot() +
-  geom_sf(data = vaud, fill = "grey90", color = "black", linewidth = 1) +
-  geom_sf(data = points_sf, color = "blue", size = 3) +
-  geom_text(
-    data = bc_data$locations,
-    aes(x = Lon, y = Lat, label = Id),
-    vjust = -1,
-    size = 4
-  ) +
-  coord_sf(
-    xlim = c(5.9, 7.4),
-    ylim = c(46.15, 47.05)
-  ) +
-  theme_bw() +
-  labs(title = "",
-       x = "",
-       y = "")
-```
-
-<img src="man/figures/README-visualize_trees-1.png" alt="" width="90%" style="display: block; margin: auto;" />
-
-``` r
-
-par(mfrow = c(1, 2))
-plot(mp_corrected$rvine_mp, var_names = "use", main = "mp")
-```
-
-<img src="man/figures/README-visualize_trees-2.png" alt="" width="90%" style="display: block; margin: auto;" />
-
-``` r
-plot(mp_corrected$rvine_rc, var_names = "use", main = "rc")
-```
-
-<img src="man/figures/README-visualize_trees-3.png" alt="" width="90%" style="display: block; margin: auto;" />
+both `mp` (middle) and `rc` (bottom).
+<img src="man/figures/README-visualize_trees-1.png" alt="" width="90%" style="display: block; margin: auto;" /><img src="man/figures/README-visualize_trees-2.png" alt="" width="90%" style="display: block; margin: auto;" /><img src="man/figures/README-visualize_trees-3.png" alt="" width="90%" style="display: block; margin: auto;" />
 
 Finally, we can visualize the bias-corrected mean temperature values per
 grid cell and compare them to the reference data.

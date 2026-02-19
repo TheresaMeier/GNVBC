@@ -52,15 +52,18 @@ data("bc_data")
 
 names_bc = names(bc_data)
 
-# Cut the time frames for faster computation
-bc_data[1:4] = lapply(names(bc_data)[-5], function(x) bc_data[[x]] %>%
-                  filter(between(time, as.Date("2000-01-01"), as.Date("2015-12-31")))
-)
+vars <- c("tas", "hurs", "sfcWind", "ps")
+
+bc_data[1:4] <- lapply(bc_data[1:4], function(df) {
+  df %>%
+    filter(between(time, as.Date("2000-01-01"), as.Date("2015-12-31")))
+})
+
 names(bc_data) = names_bc
 
 ```
 
-To give an idea about the distribution of the data, we show differences in mean temperature between reference and model projections. Note that since the time periods are chosen differently in the main paper and another reference is used (here ERA5-land, data provided by MeteoSwiss in the paper), the figure shows slightly different values.
+In this example, we cut the timeframes and keep three variables only. To give an idea about the distribution of the data, we show differences in mean temperature between reference and model projections. Note that since the time periods are chosen differently in the main paper and another reference is used (here ERA5-land, data provided by MeteoSwiss in the paper), the figure shows slightly different values.
 
 
 ```{r description, echo=FALSE, warning=FALSE, message=FALSE, fig.width=10, fig.height=5, fig.align='center'}
@@ -171,8 +174,6 @@ In order to assess distributional similarity, we compute Wasserstein distances b
 ```{r wd_pre, message=FALSE}
 wd_pre <- list()
 
-vars <- c("tas", "hurs", "sfcWind", "ps")
-
 # Loop over variables and calculate spatial Wasserstein distances
 for (var in vars) {
   wd <- VBC::calc_wasserstein(
@@ -215,7 +216,7 @@ mp_corrected = gn_vbc(
 
 
 We calculate Wasserstein distances again to assess the improvement in distributional similarity after bias correction.
-```{r wd_post, message=FALSE}
+```{r wd_post, echo = FALSE}
 wd_post <- list()
 # Loop over variables and calculate spatial Wasserstein distances
 for (var in vars) {
@@ -233,7 +234,7 @@ rownames(wd_df) <- c("WD 1", "WD 2")
 
 ```
 
-```{r wd_improv, echo = FALSE}
+```{r wd_improv}
 # Calculate improvement in Wasserstein distance
 wd_improvement <- sapply(vars, function(var) {
   pre <- wd_pre[[var]]
@@ -245,8 +246,8 @@ wd_improvement <- sapply(vars, function(var) {
 knitr::kable(wd_improvement, digits = 1, caption = "Improvement in Wasserstein distances (%)")
 
 ```
-We can visualize the resulting first tree of the estimated copulas for both `mp` and `rc`.
-```{r visualize_trees, message=FALSE}
+We can visualize the resulting first tree of the estimated copulas for both `mp` (middle) and `rc` (bottom).
+```{r visualize_trees, echo=FALSE, warning=FALSE, message=FALSE, fig.width=10, fig.height=5, fig.align='center'}
 library(rvinecopulib)
 
 # Switzerland cantons
@@ -277,9 +278,10 @@ ggplot() +
        x = "",
        y = "")
 
-par(mfrow = c(1, 2))
-plot(mp_corrected$rvine_mp, var_names = "use", main = "mp")
-plot(mp_corrected$rvine_rc, var_names = "use", main = "rc")
+p_mp = plot(mp_corrected$rvine_mp, var_names = "use", main = "mp")
+p_rc = plot(mp_corrected$rvine_rc, var_names = "use", main = "rc")
+
+
 
 ```
 
