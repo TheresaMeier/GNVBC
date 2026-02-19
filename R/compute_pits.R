@@ -242,31 +242,31 @@ extract_components <- function(gam_list, data, locs, time) {
   }
 
   # Convert remainder PITs to wide format (variable.location)
-  remainder_orig_wide = remainder_orig_df %>%
+  remainder_orig_wide = remainder_orig_df |>
     dplyr::mutate(
       Id = data_long$Id,
       time = data_long$time
-    ) %>%
+    ) |>
     tidyr::pivot_wider(
       id_cols = "time",
       names_from = "Id",
       values_from = tidyselect::all_of(vars),
       names_sep = "."
-    ) %>%
+    ) |>
     dplyr::select(-"time")
 
   # Convert seasonality component to wide format
-  seasonality_wide = seasonality_df %>%
+  seasonality_wide = seasonality_df |>
     dplyr::mutate(
       Id = data_long$Id,
       time = data_long$time
-    ) %>%
+    ) |>
     tidyr::pivot_wider(
       id_cols = "time",
       names_from = "Id",
       values_from = tidyselect::all_of(vars),
       names_sep = "."
-    ) %>%
+    ) |>
     dplyr::select(-"time")
 
   return(list(

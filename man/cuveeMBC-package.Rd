@@ -7,7 +7,7 @@
 \title{cuveeMBC: Multivariate bias correction for climate projections
 using GAMs and CUVEE}
 \description{
-What the package does (one paragraph).
+A multivariate bias correction method for climate projections explicitly designed to preserve inter-variable, spatial and temporal dependence structures. The method is based on VBC by Funk et al. (2025) integrating Probability Integral Transforms (PIT) derived from Generalized Additive Models (GAMs), and Nested Vine Copulas (NVC), a novel vine merging technique integrating two layers of dependence: spatial and inter-variable. It is designed for potentially zero-inflated climate variables, such as precipitation, and can be applied to multiple variables and locations simultaneously.
 }
 \author{
 \strong{Maintainer}: Theresa Meier \email{theresa.meier.1@unil.ch}

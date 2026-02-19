@@ -25,6 +25,7 @@ Imports:
     statmod,
     stats,
     tidyr,
+    tidyselect,
     tweedie,
     wdm
 LinkingTo: 

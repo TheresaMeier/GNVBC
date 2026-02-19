@@ -203,13 +203,13 @@ gn_vbc <- function(
   x_mph_wide = inverse_PITs(gam_fit, u_mph_wide, u_mph, components_rc)
 
   # Reshape corrected data back to final wide format
-  x_mph = x_mph_wide %>%
+  x_mph = x_mph_wide |>
     tidyr::pivot_wider(
       id_cols = "time",
       names_from = "Id",
       values_from = tidyselect::all_of(vars_unique),
       names_sep = "."
-    ) %>%
+    ) |>
     dplyr::select(-"time")
 
   return(list(

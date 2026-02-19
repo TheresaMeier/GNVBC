@@ -61,7 +61,7 @@
 #'
 #' families = list("tas" = gaussian(), "pr" = gaussian())
 #'
-#' test = get_gams(
+#' test = get_GAMs(
 #' mp = mp,
 #' mc = mc,
 #' rc = rc,
@@ -74,7 +74,7 @@
 #' )
 #'
 #' # With extra smooths
-#' test = get_gams(
+#' test = get_GAMs(
 #' mp = mp,
 #' mc = mc,
 #' rc = rc,
@@ -87,7 +87,7 @@
 #' extra_smooths = c("s(Altitude, k=3)")
 #' )
 #'
-get_gams <- function(
+get_GAMs <- function(
   mp,
   mc,
   rc,
