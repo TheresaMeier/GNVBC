@@ -1,4 +1,4 @@
-test_that("inverse_pits returns correct structure", {
+test_that("inverse_PITs returns correct structure", {
   set.seed(1)
   n_locs <- 10
   # Simulate some data for demonstration
@@ -33,7 +33,7 @@ test_that("inverse_pits returns correct structure", {
     Lat = runif(n_locs, -90, 90)
   )
 
-  gam_fit <- get_gams(
+  gam_fit <- get_GAMs(
     mp,
     mc,
     rc,
@@ -50,7 +50,7 @@ test_that("inverse_pits returns correct structure", {
 
   u_mph_wide <- transform_to_wide_format(u_mph, locs, var_names, time_p)
 
-  result <- inverse_pits(
+  result <- inverse_PITs(
     gam_fit,
     u_mph_wide,
     u_mph,

@@ -15,19 +15,16 @@ compute_pit(y, fit)
 Numeric vector of PIT values in \verb{[0,1]}
 }
 \description{
-Transforms observed responses into PIT values using
-conditional distribution implied by a fitted GAM. The distributional
-form is selected based on the variable name prefix.
+Transforms observed responses into PIT values using the conditional
+distribution implied by a fitted GAM. The distributional form is
+selected based on the variable name prefix.
 
 This function is typically used to extract model residuals on the
 copula scale (uniform on \verb{[0,1]}) for dependence modeling.
 }
 \details{
-The function supports the following families: Gaussian, Gamma,
-Tweedie, Beta, Poisson, Binomial. The family is inferred from the fitted
-model's family component. For discrete families (Poisson, Binomial),
-randomization is applied to ensure PIT values are continuous on \verb{[0,1]}.
-For continuous families, the appropriate CDF is used directly.
+The function supports the following families: Gaussian, Gamma, Tweedie, Beta, Poisson, Binomial.
+The family is inferred from the fitted model's family component. For discrete families (Poisson, Binomial), randomization is applied to ensure PIT values are continuous on \verb{[0,1]}. For continuous families, the appropriate CDF is used directly.
 }
 \examples{
 
@@ -50,22 +47,22 @@ pits_tw <- compute_pit(dat$y, b)
 set.seed(2)
 # simulate some data...
 dat <- data.frame(matrix(rbeta(200, 1, 1), ncol = 2))
-colnames(dat) <- c("y", "x0")
-b <- mgcv::gam(y ~ s(x0), data = dat, family = betar())
-pits_beta <- compute_pit(dat$y, b)
+colnames(dat) = c("y", "x0")
+b <- mgcv::gam(y~s(x0),data=dat, family = betar())
+pits_beta = compute_pit(dat$y, b)
 
 # Poisson
 set.seed(2)
 # simulate some data...
 dat <- data.frame(matrix(rpois(200, 5), ncol = 2))
-colnames(dat) <- c("y", "x0")
-b <- mgcv::gam(y ~ s(x0), data = dat, family = poisson())
-pits_pois <- compute_pit(dat$y, b)
+colnames(dat) = c("y", "x0")
+b <- mgcv::gam(y~s(x0),data=dat, family = poisson())
+pits_pois = compute_pit(dat$y, b)
 
 # Binomial
 set.seed(2)
-dat <- data.frame(y = rbinom(100, 1, 0.3), x0 = stats::runif(100))
+dat <- data.frame(y  = rbinom(100, 1, 0.3), x0 = stats::runif(100))
 b <- mgcv::gam(y ~ s(x0), data = dat, family = binomial())
-pits_binom <- compute_pit(dat$y, b)
+pits_binom = compute_pit(dat$y, b)
 
 }

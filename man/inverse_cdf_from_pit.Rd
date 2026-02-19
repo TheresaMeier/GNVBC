@@ -16,47 +16,43 @@ inverse_cdf_from_pit(p, mu, phi, family_name, power = NULL, size = 1)
 \item{family_name}{Character string indicating the distribution family
 (e.g., "gaussian", "Gamma", "Tweedie", "Beta", "Poisson", "Binomial")}
 
-\item{power}{Numeric value of the power parameter for the Tweedie
-distribution (required if family is Tweedie)}
+\item{power}{Numeric value of the power parameter for the Tweedie distribution (required if family is Tweedie)}
 
-\item{size}{Numeric value of the size parameter for the Binomial
-distribution (required if family is Binomial)}
+\item{size}{Numeric value of the size parameter for the Binomial distribution (required if family is Binomial)}
 }
 \value{
-Numeric vector of values on the original data scale
-corresponding to the input PIT values
+Numeric vector of values on the original data scale corresponding to the input PIT values
 }
 \description{
-Maps PIT values back to the original data scale using
-inverse
+Maps PIT values back to the original data scale using the inverse
 cumulative distribution function (quantile function) of the specified
 distribution family.
 }
 \examples{
-p <- runif(100)
-phi <- 4
+p = runif(100)
+phi = 4
 
 # Gaussian
-mu <- rnorm(100, mean = 5, sd = 2)
-inv_gaussian <- inverse_cdf_from_pit(p, mu, phi, "gaussian")
+mu = rnorm(100, mean = 5, sd = 2)
+inv_gaussian = inverse_cdf_from_pit(p, mu, phi, "gaussian")
 
 # Gamma
-mu <- rgamma(100, shape = 2, rate = 0.5)
-inv_gamma <- inverse_cdf_from_pit(p, mu, phi, "Gamma")
+mu = rgamma(100, shape = 2, rate = 0.5)
+inv_gamma = inverse_cdf_from_pit(p, mu, phi, "Gamma")
 
 # Tweedie
-mu <- runif(100, 0.1, 10)
-inv_tweedie <- inverse_cdf_from_pit(p, mu, phi, "Tweedie", power = 1.5)
+mu = runif(100, 0.1, 10)
+inv_tweedie = inverse_cdf_from_pit(p, mu, phi, "Tweedie", power = 1.5)
 
 # Beta
-mu <- runif(100, 0.1, 0.9)
-inv_beta <- inverse_cdf_from_pit(p, mu, phi, "Beta")
+mu = runif(100, 0.1, 0.9)
+inv_beta = inverse_cdf_from_pit(p, mu, phi, "Beta")
 
 # Poisson
-mu <- rpois(100, lambda = 5)
-inv_poisson <- inverse_cdf_from_pit(p, mu, phi, "Poisson")
+mu = rpois(100, lambda = 5)
+inv_poisson = inverse_cdf_from_pit(p, mu, phi, "Poisson")
 
 # Binomial
-mu <- rbinom(100, size = 1, prob = 0.3)
-inv_binomial <- inverse_cdf_from_pit(p, mu, phi, "Binomial", size = 1)
+mu = rbinom(100, size = 1, prob = 0.3)
+inv_binomial = inverse_cdf_from_pit(p, mu, phi, "Binomial", size = 1)
 }

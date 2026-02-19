@@ -4,3 +4,4 @@
 ^\.pre-commit-config\.yaml$
 ^cuveeMBC\.Rproj$
 air.toml
+^README\.Rmd$

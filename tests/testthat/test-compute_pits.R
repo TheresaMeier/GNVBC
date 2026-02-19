@@ -111,7 +111,7 @@ make_test_data <- function(n_locs = 10, n_time = 50) {
     pr = Gamma(link = "log")
   )
 
-  gam_list <- get_gams(
+  gam_list <- get_GAMs(
     mp = data,
     mc = data,
     rc = data,

@@ -1,4 +1,4 @@
-test_that("get_gams returns correct nested structure", {
+test_that("get_GAMs returns correct nested structure", {
   set.seed(1)
   # Simulate some data for demonstration
   mp <- data.frame(matrix(rnorm(500), ncol = 10))
@@ -23,7 +23,7 @@ test_that("get_gams returns correct nested structure", {
 
   families <- list("tas" = gaussian(), "pr" = gaussian())
 
-  res <- get_gams(
+  res <- get_GAMs(
     mp = mp,
     mc = mc,
     rc = rc,
@@ -59,7 +59,7 @@ test_that("get_gams returns correct nested structure", {
   )
 
   expect_silent(
-    get_gams(
+    get_GAMs(
       mp,
       mc,
       rc,
@@ -73,7 +73,7 @@ test_that("get_gams returns correct nested structure", {
   )
 })
 
-test_that("get_gams returns correct structure for additional variables", {
+test_that("get_GAMs returns correct structure for additional variables", {
   set.seed(1)
   n_locs <- 10
   # Simulate some data for demonstration
@@ -109,7 +109,7 @@ test_that("get_gams returns correct structure for additional variables", {
     Altitude = runif(n_locs, 0, 3000)
   )
 
-  res <- get_gams(
+  res <- get_GAMs(
     mp,
     mc,
     rc,
@@ -145,7 +145,7 @@ test_that("get_gams returns correct structure for additional variables", {
   )
 
   expect_silent(
-    get_gams(
+    get_GAMs(
       mp,
       mc,
       rc,
