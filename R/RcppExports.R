@@ -4,3 +4,4 @@
 merge_rvine_structures <- function(rvine_structure_list) {
     .Call(`_cuveeMBC_merge_rvine_structures`, rvine_structure_list)
 }
+
