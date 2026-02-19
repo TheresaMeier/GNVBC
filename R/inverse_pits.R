@@ -32,7 +32,7 @@
 #' For Tweedie and Beta models, the additional parameters
 #' (power or precision) are extracted from the fitted GAM object.
 #'
-inverse_PITs <- function(gam_fit, u_mph_wide, u_mph, components_rc) {
+inverse_pits <- function(gam_fit, u_mph_wide, u_mph, components_rc) {
   vars_unique <- names(gam_fit$rc)
 
   # Initialize corrected data container

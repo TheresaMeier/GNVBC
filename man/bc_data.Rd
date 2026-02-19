@@ -15,9 +15,9 @@ A list with five elements
 }
 }
 \source{
-\url{https://cds.climate.copernicus.eu/datasets/reanalysis-era5-land?tab=overview}
+\url{https://cds.climate.copernicus.eu/datasets/reanalysis-era5-land?tab=overview} # nolint: line_length_linter
 
-\url{https://cds.climate.copernicus.eu/datasets/projections-cordex-domains-single-levels?tab=overview}
+\url{https://cds.climate.copernicus.eu/datasets/projections-cordex-domains-single-levels?tab=overview} # nolint: line_length_linter
 }
 \usage{
 bc_data
@@ -43,12 +43,15 @@ ps: surface pressure Pa
 time: date and time in daily resolution
 }
 \references{
-Copernicus Climate Change Service (C3S)(2019): ERA5-Land hourly data from 1950
+Copernicus Climate Change Service (C3S)(2019):
+ERA5-Land hourly data from 1950
 to present. Copernicus Climate Change Service (C3S) Climate Data Store (CDS).
 DOI: 10.24381/cds.e2161bac (Accessed on 19-03-2025).
 
-Copernicus Climate Change Service, Climate Data Store, (2019): CORDEX regional
+Copernicus Climate Change Service, Climate Data Store, (2019):
+CORDEX regional
 climate model data on single levels. Copernicus Climate Change Service (C3S)
-Climate Data Store (CDS). DOI: 10.24381/cds.bc91edc3 (Accessed on 13-02-2025).
+Climate Data Store (CDS).
+DOI: 10.24381/cds.bc91edc3 (Accessed on 13-02-2025).
 }
 \keyword{datasets}
