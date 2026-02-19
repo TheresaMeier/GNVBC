@@ -97,16 +97,16 @@ get_nested_vine <- function(
   # ---------------------------------------------------------------------------
   # Helper: Map variable index to column indices in data matrix
   # ---------------------------------------------------------------------------
-  get_var_indices <- function(iVar) {
-    seq(iVar + (iVar - 1) * (nlocs - 1), iVar + iVar * (nlocs - 1))
+  get_var_indices <- function(i_var) {
+    seq(i_var + (i_var - 1) * (nlocs - 1), i_var + i_var * (nlocs - 1))
   }
 
   # ---------------------------------------------------------------------------
   # Helper: Fit spatial vine copula for a single variable
   # ---------------------------------------------------------------------------
-  fit_var_vine <- function(iVar, var, ...) {
+  fit_var_vine <- function(i_var, var, ...) {
     # Column indices corresponding to the variable across locations
-    idx <- get_var_indices(iVar)
+    idx <- get_var_indices(i_var)
 
     # Extract data for the current variable
     var_data <- as.data.frame(data_matrix[, grep(var, colnames(data))])
@@ -134,7 +134,7 @@ get_nested_vine <- function(
       tree <- igraph::mst(g)
 
       # Convert spanning tree to R-vine structure
-      structure <- spanning_tree_to_rvine_structure(tree)
+      structure <- rvine_from_spanning_tree(tree)
     }
 
     # Fit vine copula with optional fixed structure
@@ -152,19 +152,19 @@ get_nested_vine <- function(
   # ---------------------------------------------------------------------------
   rvs_level1 <- if (fixed) {
     # Fixed mode: fit spatial structure for one random variable
-    iVar <- sample(1:nvars, 1)
-    vine <- fit_var_vine(iVar, vars[iVar], ...)
+    i_var <- sample(1:nvars, 1)
+    vine <- fit_var_vine(i_var, vars[i_var], ...)
 
-    output[["vine_level1"]] = vine
-    output[["rvs_level1"]] = vine$structure
+    output[["vine_level1"]] <- vine
+    output[["rvs_level1"]] <- vine$structure
 
     vine$structure
   } else {
     # Flexible mode: fit separate spatial structure for each variable
-    result_vines <- lapply(seq_len(nvars), function(iVar) {
-      vine <- fit_var_vine(iVar, vars[iVar], ...)
-      output[[paste0("vine_level1_", vars[iVar])]] <<- vine
-      output[[paste0("rvs_level1_", vars[iVar])]] <<- vine$structure
+    result_vines <- lapply(seq_len(nvars), function(i_var) {
+      vine <- fit_var_vine(i_var, vars[i_var], ...)
+      output[[paste0("vine_level1_", vars[i_var])]] <<- vine
+      output[[paste0("rvs_level1_", vars[i_var])]] <<- vine$structure
       vine$structure
     })
 
@@ -209,5 +209,5 @@ get_nested_vine <- function(
   output[["vine_level3"]] <- vine_level3
   output[["rvs_level3"]] <- vine_level3$structure
 
-  return(output)
+  output
 }

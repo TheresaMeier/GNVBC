@@ -1,27 +1,27 @@
 test_that("gn_vbc works", {
   set.seed(1)
-  n_locs = 10
+  n_locs <- 10
   # Simulate some data for demonstration
-  mp = data.frame(
+  mp <- data.frame(
     cbind(matrix(rnorm(500), ncol = n_locs)),
     matrix(rgamma(500, shape = 2), ncol = n_locs)
   )
-  mc = data.frame(
+  mc <- data.frame(
     cbind(matrix(rnorm(1000), ncol = n_locs)),
     matrix(rgamma(1000, shape = 2), ncol = n_locs)
   )
-  rc = data.frame(
+  rc <- data.frame(
     cbind(matrix(rnorm(1000), ncol = n_locs)),
     matrix(rgamma(1000, shape = 2), ncol = n_locs)
   )
 
-  colnames(mp) = colnames(mc) = colnames(rc) = paste0(
+  colnames(mp) <- colnames(mc) <- colnames(rc) <- paste0(
     rep(c("tas.", "pr."), each = n_locs),
     c(1:n_locs)
   )
 
-  time_c = as.Date("2000-01-01") + 0:99
-  time_p = as.Date("2020-01-01") + 0:49
+  time_c <- as.Date("2000-01-01") + 0:99
+  time_p <- as.Date("2020-01-01") + 0:49
 
   # Simulate 10 locations
   locs <- data.frame(
@@ -30,7 +30,7 @@ test_that("gn_vbc works", {
     Lat = runif(n_locs, -90, 90)
   )
 
-  out = gn_vbc(
+  out <- gn_vbc(
     mp = mp,
     mc = mc,
     rc = rc,

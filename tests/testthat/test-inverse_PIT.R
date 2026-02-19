@@ -1,31 +1,31 @@
-test_that("inverse_PITs returns correct structure", {
+test_that("inverse_pits returns correct structure", {
   set.seed(1)
-  n_locs = 10
+  n_locs <- 10
   # Simulate some data for demonstration
-  mp = data.frame(
+  mp <- data.frame(
     cbind(matrix(rnorm(500), ncol = n_locs)),
     matrix(rgamma(500, shape = 2), ncol = n_locs)
   )
-  mc = data.frame(
+  mc <- data.frame(
     cbind(matrix(rnorm(1000), ncol = n_locs)),
     matrix(rgamma(1000, shape = 2), ncol = n_locs)
   )
-  rc = data.frame(
+  rc <- data.frame(
     cbind(matrix(rnorm(1000), ncol = n_locs)),
     matrix(rgamma(1000, shape = 2), ncol = n_locs)
   )
 
-  colnames(mp) = colnames(mc) = colnames(rc) = paste0(
+  colnames(mp) <- colnames(mc) <- colnames(rc) <- paste0(
     rep(c("tas.", "pr."), each = n_locs),
     c(1:n_locs)
   )
 
-  time_c = as.Date("2000-01-01") + 0:99
-  time_p = as.Date("2020-01-01") + 0:49
+  time_c <- as.Date("2000-01-01") + 0:99
+  time_p <- as.Date("2020-01-01") + 0:49
 
-  var_names = c("tas", "pr")
+  var_names <- c("tas", "pr")
 
-  families = list("tas" = gaussian(), "pr" = Gamma(link = "log"))
+  families <- list("tas" = gaussian(), "pr" = Gamma(link = "log"))
 
   locs <- data.frame(
     Id = 1:n_locs,
@@ -33,7 +33,7 @@ test_that("inverse_PITs returns correct structure", {
     Lat = runif(n_locs, -90, 90)
   )
 
-  gam_fit = get_GAMs(
+  gam_fit <- get_gams(
     mp,
     mc,
     rc,
@@ -44,13 +44,13 @@ test_that("inverse_PITs returns correct structure", {
     families
   )
 
-  components_rc = extract_components(gam_fit$rc, rc, locs, time_c)
+  components_rc <- extract_components(gam_fit$rc, rc, locs, time_c)
 
-  u_mph = rvinecopulib::pseudo_obs(mp)
+  u_mph <- rvinecopulib::pseudo_obs(mp)
 
-  u_mph_wide = transform_to_wide_format(u_mph, locs, var_names, time_p)
+  u_mph_wide <- transform_to_wide_format(u_mph, locs, var_names, time_p)
 
-  result <- inverse_PITs(
+  result <- inverse_pits(
     gam_fit,
     u_mph_wide,
     u_mph,
