@@ -2,11 +2,14 @@ Package: cuveeMBC
 Title: Multivariate bias correction for climate projections using GAMs and
     CUVEE
 Version: 0.0.0.9000
-Authors@R: 
-    person("Theresa", "Meier", , "theresa.meier.1@unil.ch", role = c("aut", "cre"))
+Authors@R: c(
+    person("Theresa", "Meier", email = "theresa.meier.1@unil.ch", role = c("aut", "cre")),
+    person("Thibault", "Vatter", email = "thibault.vatter@gmail.com", role = "aut")
+    )
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 Depends:
+    R (>= 4.1.0),
     mgcv
 Imports: 
     dplyr,
@@ -16,6 +19,7 @@ Imports:
     lubridate,
     Matrix,
     purrr,
+    Rcpp,
     rlang,
     rvinecopulib,
     statmod,
@@ -23,6 +27,12 @@ Imports:
     tidyr,
     tweedie,
     wdm
+LinkingTo: 
+    RcppEigen,
+    Rcpp,
+    BH,
+    RcppThread,
+    rvinecopulib
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

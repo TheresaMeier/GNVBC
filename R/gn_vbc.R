@@ -231,12 +231,12 @@ gn_vbc <- function(
   # Reshape corrected data back to final wide format
   x_mph <- x_mph_wide |>
     tidyr::pivot_wider(
-      id_cols = time,
+      id_cols = "time",
       names_from = "Id",
       values_from = dplyr::all_of(vars_unique),
       names_sep = "."
     ) |>
-    dplyr::select(-time)
+    dplyr::select(-"time")
 
   list(
     corrected_mp = x_mph,
