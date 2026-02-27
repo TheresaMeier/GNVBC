@@ -19,11 +19,11 @@ variables and locations simultaneously.
 
 ## Installation
 
-You can install the development version of cuveeMBC from
+You can install the development version of GNVBC from
 [GitHub](https://github.com/) with:
 
 ``` r
-remotes::install_github("TheresaMeier/cuveeMBC")
+remotes::install_github("TheresaMeier/GNVBC")
 ```
 
 ## Example
@@ -55,7 +55,7 @@ library(VBC)
 library(dplyr)
 library(tidyr)
 library(patchwork)
-library(cuveeMBC)
+library(GNVBC)
 
 data("bc_data")
 

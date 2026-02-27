@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(cuveeMBC)
+library(GNVBC)
 
-test_check("cuveeMBC")
+test_check("GNVBC")

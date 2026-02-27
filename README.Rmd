@@ -25,10 +25,10 @@ explicitly designed to preserve inter-variable, spatial and temporal dependence 
 
 ## Installation
 
-You can install the development version of cuveeMBC from [GitHub](https://github.com/) with:
+You can install the development version of GNVBC from [GitHub](https://github.com/) with:
 
 ``` r
-remotes::install_github("TheresaMeier/cuveeMBC")
+remotes::install_github("TheresaMeier/GNVBC")
 ```
 
 ## Example
@@ -46,7 +46,7 @@ library(VBC)
 library(dplyr)
 library(tidyr)
 library(patchwork)
-library(cuveeMBC)
+library(GNVBC)
 
 data("bc_data")
 

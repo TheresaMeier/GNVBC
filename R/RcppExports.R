@@ -2,6 +2,6 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 merge_rvine_structures <- function(rvine_structure_list) {
-    .Call(`_cuveeMBC_merge_rvine_structures`, rvine_structure_list)
+    .Call(`_GNVBC_merge_rvine_structures`, rvine_structure_list)
 }
 

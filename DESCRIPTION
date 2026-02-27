@@ -1,4 +1,4 @@
-Package: cuveeMBC
+Package: GNVBC
 Title: Multivariate bias correction for climate projections using GAMs and
     CUVEE
 Version: 0.0.0.9000

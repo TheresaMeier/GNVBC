@@ -22,7 +22,7 @@ cout
 CPPFLAGS
 cre
 CUVEE
-cuveeMBC
+GNVBC
 diag
 DL
 dll

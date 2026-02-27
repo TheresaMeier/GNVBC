@@ -14,7 +14,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 // merge_rvine_structures
 Rcpp::List merge_rvine_structures(Rcpp::List rvine_structure_list);
-RcppExport SEXP _cuveeMBC_merge_rvine_structures(SEXP rvine_structure_listSEXP) {
+RcppExport SEXP _GNVBC_merge_rvine_structures(SEXP rvine_structure_listSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -25,11 +25,11 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_cuveeMBC_merge_rvine_structures", (DL_FUNC) &_cuveeMBC_merge_rvine_structures, 1},
+    {"_GNVBC_merge_rvine_structures", (DL_FUNC) &_GNVBC_merge_rvine_structures, 1},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_cuveeMBC(DllInfo *dll) {
+RcppExport void R_init_GNVBC(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

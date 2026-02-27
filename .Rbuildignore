@@ -2,6 +2,6 @@
 ^LICENSE\.md$
 ^\.Rproj\.user$
 ^\.pre-commit-config\.yaml$
-^cuveeMBC\.Rproj$
+^GNVBC\.Rproj$
 air.toml
 ^README\.Rmd$
