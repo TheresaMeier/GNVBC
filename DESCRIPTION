@@ -1,6 +1,5 @@
 Package: GNVBC
-Title: Multivariate bias correction for climate projections using GAMs and
-    CUVEE
+Title: Nested Vine Copula based Multivariate Bias Correction for Climate Projections
 Version: 0.0.0.9000
 Authors@R: c(
     person("Theresa", "Meier", email = "theresa.meier.1@unil.ch", role = c("aut", "cre")),
