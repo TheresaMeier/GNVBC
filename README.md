@@ -164,7 +164,7 @@ been better preserved.
 If you use `GN-VBC` in a scientific publication, please cite the
 following paper:
 
-\[add archive link\]
+Meier, T., Koch, E., Chavez-Demoulin, V., and Vatter, T. (2026). Spatiotemporally consistent multivariate bias correction for climate projections via nested vine copulas. arXiv preprint arXiv:2603.14984.
 
 ## References
 
