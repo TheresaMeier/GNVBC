@@ -1,3 +1,22 @@
+canonical_edge_sets <- function(rvs) {
+  lapply(seq_len(rvs$trunc_lvl), function(tree) {
+    vapply(seq_len(rvs$d - tree), function(edge) {
+      conditioning <- if (tree == 1L) {
+        integer()
+      } else {
+        vapply(rvs$struct_array[seq_len(tree - 1L)], `[[`, numeric(1), edge)
+      }
+      paste(
+        paste(sort(c(rvs$order[edge], rvs$struct_array[[tree]][edge])),
+          collapse = ","
+        ),
+        paste(sort(conditioning), collapse = ","),
+        sep = "|"
+      )
+    }, character(1))
+  })
+}
+
 test_that("Merging of vine copulas works - fixed structure", {
   # Generate vine copulas for testing
   rvs_level1 <- rvinecopulib::rvine_structure(
@@ -37,7 +56,9 @@ test_that("Merging of vine copulas works - fixed structure", {
   expect_true(all(rvs_level3$order >= 1))
   expect_true(all(rvs_level3$order <= rvs_level3$d))
 
-  expect_equal(rvs_level3, rvs_level3_true)
+  # The upstream converter is free to use another matrix orientation. Compare
+  # trees, not matrix cells, so this remains a structural regression fixture.
+  expect_equal(canonical_edge_sets(rvs_level3), canonical_edge_sets(rvs_level3_true))
 })
 
 test_that("Merge works for different bridge variables - fixed structure", {
@@ -129,7 +150,47 @@ test_that("Merging of vine copulas works - flexible structure", {
   expect_true(all(rvs_level3$order >= 1))
   expect_true(all(rvs_level3$order <= rvs_level3$d))
 
-  expect_equal(rvs_level3, rvs_level3_true)
+  expect_equal(canonical_edge_sets(rvs_level3), canonical_edge_sets(rvs_level3_true))
+})
+
+test_that("different truncation levels produce a valid complete structure", {
+  spatial <- rvinecopulib::rvine_structure(
+    order = c(3, 1, 4, 2),
+    struct_array = list(c(2, 4, 2))
+  )
+  inter_variable <- rvinecopulib::rvine_structure(
+    order = c(3, 1, 2),
+    struct_array = list(c(2, 2), 1)
+  )
+
+  merged <- merge_edges_fixed_full(spatial, inter_variable, bridge_var = 4)
+
+  expect_equal(merged$trunc_lvl, 2)
+  expect_equal(sort(merged$order), seq_len(merged$d))
+  # Sending the output through the upstream edge conversion again validates the
+  # completed forest without assuming a particular matrix orientation.
+  expect_no_error(.merge_with_maps(
+    list(merged), list(seq_len(merged$d)), merged$d
+  ))
+})
+
+test_that("degenerate structures and invalid component lists fail explicitly", {
+  expect_error(
+    merge_edges_fixed_full(rvinecopulib::rvine_structure(1), rvinecopulib::rvine_structure(2), 1),
+    "non-degenerate"
+  )
+  expect_error(
+    merge_edges_individual_full(
+      list(rvinecopulib::rvine_structure(
+        order = 1:2, struct_array = list(2)
+      )),
+      rvinecopulib::rvine_structure(
+        order = 1:3, struct_array = list(c(2, 3))
+      ),
+      1
+    ),
+    "one spatial structure"
+  )
 })
 
 test_that("Merge works for different bridge variables - flexible structure", {

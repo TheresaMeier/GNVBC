@@ -1,36 +1,35 @@
-#include "rvine_trees_wrappers.hpp"
+#include <RcppEigen.h>
+#include <vinecopulib.hpp>
+#include <vinecopulib-wrappers.hpp>
+
+#include <gnvbc/rvine_merge.hpp>
 
 using namespace vinecopulib;
 
 // [[Rcpp::export]]
-Rcpp::List merge_rvine_structures(Rcpp::List rvine_structure_list)
+Rcpp::List merge_rvine_structures(Rcpp::List rvine_structure_list,
+                                  Rcpp::List local_to_global_maps,
+                                  int global_dim)
 {
-  // Check input length
-  if (rvine_structure_list.size() == 0)
-  {
-    Rcpp::stop("At least one rvine_structure must be provided.");
+  if (rvine_structure_list.size() == 0 ||
+      rvine_structure_list.size() != local_to_global_maps.size()) {
+    Rcpp::stop("At least one structure and one map per structure are required.");
+  }
+  if (global_dim < 2)
+    Rcpp::stop("The merged vine dimension must be at least two.");
+
+  std::vector<RVineTrees> components;
+  std::vector<std::vector<size_t>> maps;
+  components.reserve(rvine_structure_list.size());
+  maps.reserve(rvine_structure_list.size());
+  for (int i = 0; i < rvine_structure_list.size(); ++i) {
+    const Rcpp::List& r_struct = rvine_structure_list[i];
+    RVineStructure structure = rvine_structure_wrap(r_struct, true);
+    components.push_back(structure.get_trees());
+    maps.push_back(Rcpp::as<std::vector<size_t>>(local_to_global_maps[i]));
   }
 
-  // Convert to vector of RVineTrees
-  std::vector<RVineTrees> vines;
-  for (int i = 0; i < rvine_structure_list.size(); ++i)
-  {
-    const Rcpp::List &r_struct = rvine_structure_list[i];
-    size_t trunc_lvl = r_struct["trunc_lvl"];
-    std::vector<size_t> order = r_struct["order"];
-    TriangularArray<size_t> struct_array = struct_array_wrap(r_struct["struct_array"], trunc_lvl);
-    vines.push_back(RVineTrees(order, struct_array));
-  }
-
-  // Merge vines
-  RVineTrees merged_vine(vines);
-
-  // Convert to struct_array (with fill_missing = true)
-  auto [merged_order, merged_array] = merged_vine.to_struct_array(true);
-
-  // Create a valid RVineStructure
-  RVineStructure merged_structure(merged_order, merged_array);
-
-  // Return wrapped R object
+  RVineStructure merged_structure =
+    gnvbc::merge_components(static_cast<size_t>(global_dim), components, maps);
   return rvine_structure_wrap(merged_structure);
 }

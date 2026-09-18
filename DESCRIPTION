@@ -20,7 +20,7 @@ Imports:
     purrr,
     Rcpp,
     rlang,
-    rvinecopulib,
+    rvinecopulib (>= 1.0.0.1.0),
     statmod,
     stats,
     tidyr,
