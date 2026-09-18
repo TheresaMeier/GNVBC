@@ -174,6 +174,12 @@ complete_tree(size_t tree, size_t d, const Tree& inherited,
     }
   }
 
+  // A full inherited tree still needs the validation above, but never needs
+  // candidate generation. This is the normal first-tree case for a merged
+  // spatial-block-plus-bridge structure.
+  if (result.size() == target_edges)
+    return result;
+
   std::vector<CompletionEdge> candidates;
   for (size_t left = 0; left < node_variables.size(); ++left) {
     for (size_t right = left + 1; right < node_variables.size(); ++right) {
