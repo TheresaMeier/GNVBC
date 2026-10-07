@@ -8,28 +8,16 @@
 merge_edges_individual_full(rvs_level1, rvs_level2, bridge_var)
 }
 \arguments{
-\item{rvs_level1}{List of R-vine structure objects for spatial dependence
-(one structure per variable)}
+\item{rvs_level1}{List of spatial R-vine structures, one per variable.}
 
-\item{rvs_level2}{R-vine structure object for inter-variable dependence}
+\item{rvs_level2}{Inter-variable R-vine structure.}
 
-\item{bridge_var}{Integer. Location index used to connect the hierarchies.}
+\item{bridge_var}{Integer location index used to connect the hierarchies.}
 }
 \value{
-Merged R-vine structure (rvs_level3) combining spatial and
-inter-variable dependence with variables properly ordered.
+A merged \code{rvine_structure}.
 }
 \description{
-Combines level 1 (spatial dependence within variables)
-and level 2 (inter-variable dependence) R-vine structures into a
-single unified structure using an individual spatial structure
-approach. Unlike the fixed version, each variable can have its own
-level 1 structure. Level 2 structures are replicated and merged with
-their corresponding level 1 structures.
-}
-\details{
-This function handles variable-specific level 1 structures by
-replicating each corresponding level 2 structure, then transforming
-both to natural ordering before merging. The bridge variable anchors
-the connection between the two levels.
+Combines one spatial R-vine structure per variable with an
+inter-variable R-vine structure at one bridge location.
 }

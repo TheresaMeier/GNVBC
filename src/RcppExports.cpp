@@ -13,19 +13,21 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // merge_rvine_structures
-Rcpp::List merge_rvine_structures(Rcpp::List rvine_structure_list);
-RcppExport SEXP _GNVBC_merge_rvine_structures(SEXP rvine_structure_listSEXP) {
+Rcpp::List merge_rvine_structures(Rcpp::List rvine_structure_list, Rcpp::List local_to_global_maps, int global_dim);
+RcppExport SEXP _GNVBC_merge_rvine_structures(SEXP rvine_structure_listSEXP, SEXP local_to_global_mapsSEXP, SEXP global_dimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::List >::type rvine_structure_list(rvine_structure_listSEXP);
-    rcpp_result_gen = Rcpp::wrap(merge_rvine_structures(rvine_structure_list));
+    Rcpp::traits::input_parameter< Rcpp::List >::type local_to_global_maps(local_to_global_mapsSEXP);
+    Rcpp::traits::input_parameter< int >::type global_dim(global_dimSEXP);
+    rcpp_result_gen = Rcpp::wrap(merge_rvine_structures(rvine_structure_list, local_to_global_maps, global_dim));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_GNVBC_merge_rvine_structures", (DL_FUNC) &_GNVBC_merge_rvine_structures, 1},
+    {"_GNVBC_merge_rvine_structures", (DL_FUNC) &_GNVBC_merge_rvine_structures, 3},
     {NULL, NULL, 0}
 };
 
